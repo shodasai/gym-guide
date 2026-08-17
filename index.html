@@ -125,6 +125,22 @@
     color:var(--ink); font:800 20px/1 inherit; cursor:pointer; }
   .lhint{ color:var(--sub); font-size:12.5px; text-align:center; margin-top:14px; }
   #userchip .plabel{ color:var(--ink); padding-right:10px; }
+  #loginmodes{ display:flex; gap:8px; margin-bottom:14px; }
+  #loginmodes button{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font:700 14.5px/1.2 inherit; cursor:pointer; }
+  #loginmodes button.active{ border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); color:var(--accent); }
+  .lsec{ display:none; margin-bottom:6px; }
+  .lsec.show{ display:block; }
+  #loginsearch{ width:100%; padding:12px; border:1px solid var(--line); border-radius:12px;
+    background:var(--card); color:var(--ink); font:600 15px/1.2 inherit; margin-bottom:10px; }
+  .keepbox{ display:flex; align-items:center; gap:8px; margin-top:12px; color:var(--sub); font-size:13.5px; cursor:pointer; }
+  .keepbox input{ width:18px; height:18px; accent-color:var(--accent); }
+  #adminrow{ display:none; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:-6px 0 10px; align-items:center; }
+  #adminrow.show{ display:flex; }
+  #adminrow .alabel{ color:var(--sub); font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  #adminrow button{ background:var(--card); border:1px solid var(--line); border-radius:8px; color:var(--sub);
+    font:600 12px/1 inherit; padding:7px 10px; cursor:pointer; }
+  .wcol input.savedok{ border-color:var(--done); }
 
   .mhead{ padding:10px 14px 4px; font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
     border-top:1px solid var(--line); }
@@ -200,7 +216,8 @@
       <div class="seg" id="langseg"><button data-v="en">EN</button><button data-v="fr">FR</button></div>
       <div class="seg" id="unitseg"><button data-v="kg">kg</button><button data-v="lbs">lbs</button></div>
     </div>
-    <div id="profactions"><button id="prof-rename" type="button"></button><button id="prof-delete" type="button"></button></div>
+    <div id="profactions"><button id="prof-rename" type="button"></button></div>
+    <div id="adminrow"><span class="alabel"></span></div>
     <div id="profform"><input id="profname" maxlength="14" autocomplete="off"><button id="prof-ok" type="button">OK</button><button id="prof-cancel" type="button">✕</button></div>
     <div class="kicker"><span class="en">3 days on · 1 day off · repeat</span><span class="fr">3 jours on · 1 jour off · on recommence</span></div>
     <h1>Romain's Gym Guide</h1>
@@ -324,9 +341,19 @@
 
 <div id="loginscr"><div class="loginbox">
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
-  <div id="loginlist"></div>
-  <div class="lform"><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">+</button></div>
-  <p class="lhint"><span class="en">Pick your profile — you stay logged in on this device until you log out. Weights and ticks save per profile.</span><span class="fr">Choisis ton profil — tu restes connecté sur cet appareil jusqu'à la déconnexion. Poids et coches se sauvegardent par profil.</span></p>
+  <div id="loginmodes">
+    <button id="lm-connect" type="button"><span class="en">Log in</span><span class="fr">Se connecter</span></button>
+    <button id="lm-create" type="button"><span class="en">Create a profile</span><span class="fr">Créer un compte</span></button>
+  </div>
+  <div id="loginconnect" class="lsec">
+    <input id="loginsearch" maxlength="14" autocomplete="off">
+    <div id="loginlist"></div>
+  </div>
+  <div id="logincreate" class="lsec">
+    <div class="lform"><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">OK</button></div>
+  </div>
+  <label class="keepbox"><input type="checkbox" id="keeplogged" checked> <span class="en">Stay logged in on this device</span><span class="fr">Rester connecté sur cet appareil</span></label>
+  <p class="lhint"><span class="en">Weights and ticks save automatically, per profile, on this device.</span><span class="fr">Poids et coches se sauvegardent automatiquement, par profil, sur cet appareil.</span></p>
 </div></div>
 
 <script>
@@ -343,8 +370,9 @@
   function allProfiles(){ return BUILTINS.concat(customs); }
   function saveCustoms(){ try{ localStorage.setItem(PLKEY,JSON.stringify(customs)); }catch(e){} }
 
-  var profile=null, state={}, weights={}, unit="kg";
-  try{ profile=localStorage.getItem(PKEY); }catch(e){}
+  var profile=null, state={}, weights={}, unit="kg", persistLogin=true;
+  try{ profile=localStorage.getItem(PKEY)||sessionStorage.getItem(PKEY); }catch(e){}
+  try{ if(sessionStorage.getItem(PKEY)!=null && localStorage.getItem(PKEY)==null) persistLogin=false; }catch(e){}
   if(profile && allProfiles().indexOf(profile)===-1) profile=null;
   try{ unit=localStorage.getItem(UKEY)||"kg"; }catch(e){}
 
@@ -409,7 +437,7 @@
   function setLang(l){
     body.classList.toggle("fr-mode", l==="fr");
     segSet("langseg",l);
-    refreshSets(); refreshCounts(); refreshWeights(); refreshProfActions();
+    refreshSets(); refreshCounts(); refreshWeights(); refreshProfActions(); refreshAdmin();
     try{ localStorage.setItem(LANGKEY,l); }catch(e){}
   }
   function setUnit(u){
@@ -421,31 +449,59 @@
   function refreshProfActions(){
     var isCustom=customs.indexOf(profile)!==-1;
     profactions.classList.toggle("show", isCustom);
-    document.getElementById("prof-rename").textContent=(isFr()?"✎ Renommer ":"✎ Rename ")+profile;
-    document.getElementById("prof-delete").textContent=(isFr()?"🗑 Supprimer ":"🗑 Delete ")+profile;
+    if(isCustom) document.getElementById("prof-rename").textContent=(isFr()?"✎ Renommer ":"✎ Rename ")+profile;
     document.getElementById("logoutbtn").textContent=isFr()?"Déconnexion":"Log out";
     var li=document.getElementById("loginname");
-    if(li.placeholder.indexOf("!")===-1) li.placeholder=isFr()?"Nouveau profil…":"New profile…";
+    if(li && li.placeholder.indexOf("!")===-1) li.placeholder=isFr()?"Nom du profil…":"Profile name…";
+    var ls=document.getElementById("loginsearch");
+    if(ls) ls.placeholder=isFr()?"Tape ton prénom…":"Type your name…";
+  }
+  var loginscr=document.getElementById("loginscr");
+  function storeLogin(p){
+    try{
+      localStorage.removeItem(PKEY); sessionStorage.removeItem(PKEY);
+      if(persistLogin) localStorage.setItem(PKEY,p); else sessionStorage.setItem(PKEY,p);
+    }catch(e){}
   }
   function setProfile(p){
     profile=p;
-    try{ localStorage.setItem(PKEY,p); }catch(e){}
+    storeLogin(p);
     document.getElementById("username").textContent=p||"";
     loadProfileData();
-    refreshTicks(); refreshWeights(); refreshProfActions();
+    refreshTicks(); refreshWeights(); refreshProfActions(); refreshAdmin();
   }
-  var loginscr=document.getElementById("loginscr");
-  function renderLogin(){
+  function setLoginMode(m){
+    document.getElementById("lm-connect").classList.toggle("active",m==="connect");
+    document.getElementById("lm-create").classList.toggle("active",m==="create");
+    document.getElementById("loginconnect").classList.toggle("show",m==="connect");
+    document.getElementById("logincreate").classList.toggle("show",m==="create");
+    if(m==="connect") document.getElementById("loginsearch").focus();
+    else document.getElementById("loginname").focus();
+  }
+  document.getElementById("lm-connect").addEventListener("click",function(){ setLoginMode("connect"); });
+  document.getElementById("lm-create").addEventListener("click",function(){ setLoginMode("create"); });
+  function renderSuggestions(){
+    var q=document.getElementById("loginsearch").value.trim().toLowerCase();
     var list=document.getElementById("loginlist");
     list.innerHTML="";
+    if(!q) return;
     allProfiles().forEach(function(p){
-      var b=document.createElement("button"); b.type="button"; b.textContent=p;
-      b.addEventListener("click",function(){ doLogin(p); });
-      list.appendChild(b);
+      if(p.toLowerCase().indexOf(q)===0){
+        var b=document.createElement("button"); b.type="button"; b.textContent=p;
+        b.addEventListener("click",function(){ doLogin(p); });
+        list.appendChild(b);
+      }
     });
   }
-  function doLogin(p){ setProfile(p); loginscr.classList.remove("show"); }
-  function showLogin(){ renderLogin(); loginscr.classList.add("show"); }
+  document.getElementById("loginsearch").addEventListener("input",renderSuggestions);
+  function doLogin(p){
+    persistLogin=document.getElementById("keeplogged").checked;
+    setProfile(p);
+    document.getElementById("loginsearch").value="";
+    document.getElementById("loginlist").innerHTML="";
+    loginscr.classList.remove("show");
+  }
+  function showLogin(){ setLoginMode("connect"); loginscr.classList.add("show"); }
   document.getElementById("login-add").addEventListener("click",function(){
     var inp=document.getElementById("loginname");
     var name=inp.value.trim().slice(0,14);
@@ -460,12 +516,36 @@
     if(ev.key==="Enter") document.getElementById("login-add").click();
   });
   document.getElementById("logoutbtn").addEventListener("click",function(){
-    try{ localStorage.removeItem(PKEY); }catch(e){}
+    try{ localStorage.removeItem(PKEY); sessionStorage.removeItem(PKEY); }catch(e){}
     profile=null;
     document.getElementById("username").textContent="";
-    refreshProfActions();
+    refreshProfActions(); refreshAdmin();
     showLogin();
   });
+  var admArmed=null;
+  function refreshAdmin(){
+    var row=document.getElementById("adminrow");
+    row.querySelectorAll("button").forEach(function(b){ b.remove(); });
+    var show=(profile==="Max" && customs.length>0);
+    row.classList.toggle("show",show);
+    row.querySelector(".alabel").textContent=isFr()?"Gérer les profils :":"Manage profiles:";
+    if(!show) return;
+    customs.forEach(function(p){
+      var b=document.createElement("button"); b.type="button"; b.textContent="🗑 "+p;
+      b.addEventListener("click",function(){
+        if(admArmed===p){
+          admArmed=null;
+          [KEY,WKEY].forEach(function(k){ try{ localStorage.removeItem(p+":"+k); }catch(e){} });
+          customs.splice(customs.indexOf(p),1); saveCustoms();
+          refreshAdmin();
+        } else {
+          admArmed=p; b.textContent=(isFr()?"Sûr ? 🗑 ":"Sure? 🗑 ")+p;
+          setTimeout(function(){ if(admArmed===p){ admArmed=null; refreshAdmin(); } },3000);
+        }
+      });
+      row.appendChild(b);
+    });
+  }
   function migrateKeys(oldP,newP){
     [KEY,WKEY].forEach(function(k){
       try{
@@ -510,22 +590,6 @@
     if(customs.indexOf(profile)===-1) return;
     openForm("rename");
   });
-  var delArmed=null;
-  document.getElementById("prof-delete").addEventListener("click",function(){
-    var idx=customs.indexOf(profile); if(idx===-1) return;
-    var btn=this;
-    if(delArmed){
-      clearTimeout(delArmed); delArmed=null;
-      [KEY,WKEY].forEach(function(k){ try{ localStorage.removeItem(profile+":"+k); }catch(e){} });
-      customs.splice(idx,1); saveCustoms();
-      try{ localStorage.removeItem(PKEY); }catch(e){}
-      profile=null; document.getElementById("username").textContent="";
-      refreshProfActions(); showLogin();
-    } else {
-      btn.textContent=isFr()?"Sûr ? Re-tape":"Sure? Tap again";
-      delArmed=setTimeout(function(){ delArmed=null; refreshProfActions(); },3000);
-    }
-  });
 
   btnStarter.addEventListener("click",function(){ setMode("starter"); });
   btnFull.addEventListener("click",function(){ setMode("full"); });
@@ -552,6 +616,8 @@
         if(isNaN(v)||v<0){ delete weights[k]; }
         else { weights[k]=(unit==="lbs")?v/2.20462:v; }
         saveWeights();
+        winput.classList.remove("savedok"); void winput.offsetWidth; winput.classList.add("savedok");
+        setTimeout(function(){ winput.classList.remove("savedok"); },700);
       }
       winput.addEventListener("input",function(){ storeDisplay(parseFloat(winput.value)); });
       col.querySelectorAll(".wbtn").forEach(function(btn){
