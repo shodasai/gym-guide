@@ -116,10 +116,6 @@
   #loginscr.show{ display:flex; }
   .loginbox{ width:100%; max-width:340px; }
   .ltitle{ font-size:26px; font-weight:800; margin-bottom:18px; text-align:center; }
-  #loginlist{ display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
-  #loginlist button{ padding:14px; border-radius:12px; border:1px solid var(--line); background:var(--card);
-    color:var(--ink); font:700 16px/1.2 inherit; cursor:pointer; }
-  #loginlist button:active{ border-color:var(--accent); }
   .lform{ display:flex; gap:8px; }
   .lform input{ flex:1; padding:12px; border:1px solid var(--line); border-radius:12px;
     background:var(--card); color:var(--ink); font:600 15px/1.2 inherit; }
@@ -127,11 +123,7 @@
     color:var(--ink); font:800 20px/1 inherit; cursor:pointer; }
   .lhint{ color:var(--sub); font-size:12.5px; text-align:center; margin-top:14px; }
   .loginlangrow{ display:flex; justify-content:center; margin-bottom:16px; }
-  .lnew{ display:block; width:100%; padding:13px; border-radius:12px; border:1.5px dashed var(--line);
-    background:none; color:var(--sub); font:700 15px/1.2 inherit; cursor:pointer; margin-bottom:14px; }
-  .lnew:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   .lform{ margin-bottom:4px; }
-  .lform[hidden]{ display:none; }
 
   #actcard{ background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden; }
   .acthead{ padding:11px 14px; cursor:pointer; font-size:14px; color:var(--sub); -webkit-user-select:none; user-select:none; }
@@ -538,9 +530,11 @@
 <div id="loginscr"><div class="loginbox">
   <div class="loginlangrow"><div class="seg" id="loginlangseg"><button data-v="en" type="button">EN</button><button data-v="fr" type="button">FR</button></div></div>
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
-  <div id="loginlist"></div>
-  <button id="lognew" type="button" class="lnew">＋ <span class="en">New profile</span><span class="fr">Nouveau profil</span></button>
-  <div class="lform" id="logform" hidden><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">OK</button></div>
+  <div class="lform"><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">OK</button></div>
+  <div id="logconfirm" hidden>
+    <p class="lhint" id="logconfirmtxt"></p>
+    <div class="qzbtns"><button class="bigbtn primary" id="log-create" type="button"></button><button class="bigbtn" id="log-fix" type="button"></button></div>
+  </div>
   <label class="keepbox"><input type="checkbox" id="keeplogged" checked> <span class="en">Stay logged in on this device</span><span class="fr">Rester connecté sur cet appareil</span></label>
 </div></div>
 
@@ -676,37 +670,44 @@
     refreshTicks(); refreshWeights(); refreshProfActions(); refreshAdmin();
     setTimeout(function(){ try{ maybeProposeQuiz(); }catch(e){} },400);
   }
-  function renderLoginList(){
-    var list=document.getElementById("loginlist");
-    list.innerHTML="";
-    allProfiles().forEach(function(p){
-      var b=document.createElement("button"); b.type="button"; b.textContent=p;
-      b.addEventListener("click",function(){ doLogin(p); });
-      list.appendChild(b);
-    });
-  }
   function doLogin(p){
     persistLogin=document.getElementById("keeplogged").checked;
     setProfile(p);
-    document.getElementById("logform").hidden=true;
     document.getElementById("loginname").value="";
+    document.getElementById("logconfirm").hidden=true;
     loginscr.classList.remove("show");
     setView("prog");
   }
-  function showLogin(){ renderLoginList(); loginscr.classList.add("show"); }
-  document.getElementById("lognew").addEventListener("click",function(){
-    document.getElementById("logform").hidden=false;
+  function showLogin(){
+    document.getElementById("logconfirm").hidden=true;
+    loginscr.classList.add("show");
+    setTimeout(function(){ document.getElementById("loginname").focus(); },50);
+  }
+  document.getElementById("login-add").addEventListener("click",function(){
+    var name=document.getElementById("loginname").value.trim().slice(0,14);
+    if(!name) return;
+    var match=null;
+    allProfiles().forEach(function(p){ if(p.toLowerCase()===name.toLowerCase()) match=p; });
+    if(match){ doLogin(match); return; }
+    document.getElementById("logconfirmtxt").textContent=isFr()
+      ? "Première fois ? Je crée ton profil « "+name+" »"
+      : "First time? I'll create your profile \""+name+"\"";
+    document.getElementById("log-create").textContent=isFr()?"Oui, c'est parti":"Yes, let's go";
+    document.getElementById("log-fix").textContent=isFr()?"Corriger":"Fix it";
+    document.getElementById("logconfirm").hidden=false;
+  });
+  document.getElementById("log-create").addEventListener("click",function(){
+    var name=document.getElementById("loginname").value.trim().slice(0,14);
+    if(!name) return;
+    customs.push(name); saveCustoms();
+    doLogin(name);
+  });
+  document.getElementById("log-fix").addEventListener("click",function(){
+    document.getElementById("logconfirm").hidden=true;
     document.getElementById("loginname").focus();
   });
-  document.getElementById("login-add").addEventListener("click",function(){
-    var inp=document.getElementById("loginname");
-    var name=inp.value.trim().slice(0,14);
-    if(!name) return;
-    var exists=allProfiles().some(function(p){ return p.toLowerCase()===name.toLowerCase(); });
-    if(exists){ inp.value=""; inp.placeholder=isFr()?"Déjà pris !":"Already taken!"; return; }
-    customs.push(name); saveCustoms();
-    inp.value="";
-    doLogin(name);
+  document.getElementById("loginname").addEventListener("input",function(){
+    document.getElementById("logconfirm").hidden=true;
   });
   document.getElementById("loginname").addEventListener("keydown",function(ev){
     if(ev.key==="Enter") document.getElementById("login-add").click();
