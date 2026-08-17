@@ -126,6 +126,7 @@
   .lform button{ width:56px; border:1px solid var(--line); border-radius:12px; background:var(--card2);
     color:var(--ink); font:800 20px/1 inherit; cursor:pointer; }
   .lhint{ color:var(--sub); font-size:12.5px; text-align:center; margin-top:14px; }
+  .loginlangrow{ display:flex; justify-content:center; margin-bottom:16px; }
   #userchip .plabel{ color:var(--ink); padding-right:10px; }
   #loginmodes{ display:flex; gap:8px; margin-bottom:14px; }
   #loginmodes button{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card);
@@ -468,6 +469,7 @@
 </div></div>
 
 <div id="loginscr"><div class="loginbox">
+  <div class="loginlangrow"><div class="seg" id="loginlangseg"><button data-v="en" type="button">EN</button><button data-v="fr" type="button">FR</button></div></div>
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
   <div id="loginmodes">
     <button id="lm-connect" type="button"><span class="en">Log in</span><span class="fr">Se connecter</span></button>
@@ -569,7 +571,7 @@
   }
   function setLang(l){
     body.classList.toggle("fr-mode", l==="fr");
-    segSet("langseg",l);
+    segSet("langseg",l); segSet("loginlangseg",l);
     refreshSets(); refreshCounts(); refreshWeights(); refreshProfActions(); refreshAdmin();
     try{ localStorage.setItem(LANGKEY,l); }catch(e){}
   }
@@ -741,7 +743,7 @@
 
   btnStarter.addEventListener("click",function(){ setMode("starter"); });
   btnFull.addEventListener("click",function(){ setMode("full"); });
-  document.querySelectorAll("#langseg button").forEach(function(b){
+  document.querySelectorAll("#langseg button, #loginlangseg button").forEach(function(b){
     b.addEventListener("click",function(){ setLang(b.getAttribute("data-v")); });
   });
   document.querySelectorAll("#unitseg button").forEach(function(b){
@@ -853,8 +855,9 @@
     });
   });
 
-  var savedMode="starter", savedLang="en";
-  try{ savedMode=localStorage.getItem(MODEKEY)||"starter"; savedLang=localStorage.getItem(LANGKEY)||"en"; }catch(e){}
+  var savedMode="starter", savedLang=null;
+  try{ savedMode=localStorage.getItem(MODEKEY)||"starter"; savedLang=localStorage.getItem(LANGKEY); }catch(e){}
+  if(!savedLang) savedLang=((navigator.language||"").toLowerCase().indexOf("fr")===0)?"fr":"en";
   loadProfileData();
   setLang(savedLang==="fr"?"fr":"en");
   setMode(savedMode==="full"?"full":"starter");
