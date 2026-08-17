@@ -1,0 +1,12 @@
+{
+  "name": "Gym Guide",
+  "short_name": "Gym Guide",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#101214",
+  "theme_color": "#f5b800",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
