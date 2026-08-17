@@ -127,6 +127,11 @@
     color:var(--ink); font:800 20px/1 inherit; cursor:pointer; }
   .lhint{ color:var(--sub); font-size:12.5px; text-align:center; margin-top:14px; }
   .loginlangrow{ display:flex; justify-content:center; margin-bottom:16px; }
+  .lnew{ display:block; width:100%; padding:13px; border-radius:12px; border:1.5px dashed var(--line);
+    background:none; color:var(--sub); font:700 15px/1.2 inherit; cursor:pointer; margin-bottom:14px; }
+  .lnew:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .lform{ margin-bottom:4px; }
+  .lform[hidden]{ display:none; }
 
   #actcard{ background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden; }
   .acthead{ padding:11px 14px; cursor:pointer; font-size:14px; color:var(--sub); -webkit-user-select:none; user-select:none; }
@@ -141,14 +146,6 @@
   #actgrid td.on{ color:var(--done); font-weight:800; }
   #actgrid .nm{ text-align:left; color:var(--ink); white-space:nowrap; padding-right:10px; }
   #userchip .plabel{ color:var(--ink); padding-right:10px; }
-  #loginmodes{ display:flex; gap:8px; margin-bottom:14px; }
-  #loginmodes button{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card);
-    color:var(--ink); font:700 14.5px/1.2 inherit; cursor:pointer; }
-  #loginmodes button.active{ border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); color:var(--accent); }
-  .lsec{ display:none; margin-bottom:6px; }
-  .lsec.show{ display:block; }
-  #loginsearch{ width:100%; padding:12px; border:1px solid var(--line); border-radius:12px;
-    background:var(--card); color:var(--ink); font:600 15px/1.2 inherit; margin-bottom:10px; }
   .keepbox{ display:flex; align-items:center; gap:8px; margin-top:12px; color:var(--sub); font-size:13.5px; cursor:pointer; }
   .keepbox input{ width:18px; height:18px; accent-color:var(--accent); }
   #adminrow{ display:none; flex-wrap:wrap; gap:8px; margin-top:14px; align-items:center; }
@@ -189,11 +186,23 @@
   #scrim.open{ display:block; }
   @media (prefers-reduced-motion: reduce){ #drawer{ transition:none; } }
 
-  .sec-prog, .sec-rules, .sec-account, .sec-settings{ display:none; }
+  .sec-prog, .sec-rules, .sec-account, .sec-settings, .sec-tests{ display:none; }
   body[data-view="prog"] .sec-prog{ display:block; }
   body[data-view="rules"] .sec-rules{ display:block; }
   body[data-view="account"] .sec-account{ display:block; }
   body[data-view="settings"] .sec-settings{ display:block; }
+  body[data-view="tests"] .sec-tests{ display:block; }
+  #testsbtn{ width:44px; height:40px; border-radius:10px; border:1px solid var(--line); background:var(--card); font:400 17px/1 inherit; cursor:pointer; }
+  #testsbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .testcard{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:10px; cursor:pointer; color:var(--ink); font:inherit; }
+  .testcard .ticon{ font-size:24px; }
+  .testcard .ttxt{ flex:1; min-width:0; }
+  .testcard .ttxt b{ display:block; font-size:15.5px; }
+  .testcard .ttxt small{ color:var(--sub); font-size:12.5px; }
+  .testcard .tgo{ color:var(--sub); font-size:20px; }
+  .testcard:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
   .setrow{ display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--card);
     border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:10px; }
@@ -287,23 +296,41 @@
   #im-ios.show, #im-other.show{ display:block; }
 
   #quizmodal{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:85; display:none;
-    align-items:center; justify-content:center; padding:24px; }
+    align-items:center; justify-content:center; padding:18px; }
   #quizmodal.show{ display:flex; }
-  .qzbox{ max-width:360px; max-height:86vh; overflow-y:auto; }
-  .qzbox p{ margin:8px 0 14px; color:var(--sub); font-size:14.5px; }
-  .qzstep{ font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--sub); margin-bottom:8px; }
-  .qzq{ font-size:16.5px; font-weight:700; line-height:1.4; margin-bottom:16px; }
-  .qzslider{ width:100%; accent-color:var(--accent); height:36px; cursor:pointer; }
-  .qzval{ text-align:center; font-size:16px; font-weight:800; color:var(--accent); margin:2px 0 4px; }
-  .qzscale{ display:flex; justify-content:space-between; color:var(--sub); font-size:11.5px; margin-bottom:12px; }
-  .qzbtns{ display:flex; gap:8px; margin-top:8px; }
+  .qzbox{ max-width:380px; max-height:88vh; overflow-y:auto; padding:24px 20px; }
+  .qzbox p{ margin:10px 0 20px; color:var(--sub); font-size:15px; line-height:1.5; }
+  .qzbar{ height:5px; background:var(--card2); border-radius:99px; margin-bottom:20px; overflow:hidden; }
+  .qzbar i{ display:block; height:100%; background:var(--accent); border-radius:99px; transition:width .2s ease; }
+  .qzq{ font-size:18px; font-weight:700; line-height:1.4; margin:2px 0 26px; min-height:76px; }
+  .qzslider{ width:100%; accent-color:var(--accent); height:40px; cursor:pointer; margin:2px 0 0; }
+  .qzval{ text-align:center; font-size:17px; font-weight:800; color:var(--accent); margin:0 0 6px; }
+  .qzscale{ display:flex; justify-content:space-between; color:var(--sub); font-size:12px; margin:2px 2px 24px; }
+  .qzbtns{ display:flex; gap:8px; margin-top:10px; }
   .qzbtns .bigbtn{ margin-top:0; flex:1; }
-  .qzbtns .bigbtn.qback{ flex:0 0 64px; }
+  .qzbtns .bigbtn.qback{ flex:0 0 60px; }
   .bigbtn.primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
-  .qzscore{ font-size:36px; font-weight:800; text-align:center; margin:4px 0; }
-  .qzverdict{ text-align:center; color:var(--sub); font-size:14.5px; margin-bottom:10px; }
-  .qzadv{ background:var(--card2); border-radius:10px; padding:10px 12px; margin-top:8px; font-size:13.5px; color:var(--sub); }
-  .qzadv b{ color:var(--ink); font-size:13px; }
+  .qzscore{ font-size:42px; font-weight:800; text-align:center; margin:2px 0 0; }
+  .qzverdict{ text-align:center; color:var(--sub); font-size:14.5px; line-height:1.45; margin:6px 0 4px; }
+  .qzhuman{ text-align:center; color:var(--sub); font-size:12.5px; font-style:italic; margin:0 0 16px; }
+  details.qzrow{ border-top:1px solid var(--line); }
+  details.qzrow:last-of-type{ border-bottom:1px solid var(--line); }
+  details.qzrow summary{ list-style:none; display:flex; align-items:center; gap:10px; padding:11px 2px; cursor:pointer; }
+  details.qzrow summary::-webkit-details-marker{ display:none; }
+  details.qzrow .nm{ flex:1; font-weight:650; font-size:14.5px; }
+  details.qzrow .qn{ font-weight:800; font-size:14px; font-variant-numeric:tabular-nums; }
+  .qn.bad{ color:var(--m-pecs); } .qn.mid{ color:var(--accent); } .qn.good{ color:var(--done); }
+  details.qzrow summary::after{ content:"▸"; color:var(--sub); font-size:13px; }
+  details.qzrow[open] summary::after{ content:"▾"; }
+  details.qzrow p{ margin:0 2px 12px; font-size:13.5px; color:var(--sub); line-height:1.5; }
+  .qzrem{ display:flex; align-items:center; gap:10px; background:var(--card2); border-radius:12px;
+    padding:12px 14px; margin-top:14px; cursor:pointer; font-size:14px; }
+  .qzrem input{ width:19px; height:19px; accent-color:var(--accent); flex:0 0 auto; }
+
+  #toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:20px; z-index:90;
+    background:var(--card); border:1px solid var(--accent); color:var(--ink); border-radius:12px;
+    padding:11px 16px; font-size:14px; font-weight:600; max-width:88%; box-shadow:0 6px 24px rgba(0,0,0,.35); display:none; }
+  #toast.show{ display:block; }
 </style>
 
 <div class="wrap">
@@ -311,33 +338,48 @@
     <div class="appbar">
       <button id="menubtn" type="button" aria-label="Menu">☰</button>
       <div class="apptitle">Gym Guide</div>
+      <button id="testsbtn" type="button" aria-label="Tests">📝</button>
       <button id="userbtn" type="button">👤 <b id="username"></b></button>
     </div>
   </header>
 
   <section class="sec-rules">
-    <p class="byline"><span class="en">I made this for you. Tap an exercise to tick it off, use +/− to track your weights. — Max</span><span class="fr">Je t'ai fait ça. Tape un exo pour le cocher, utilise +/− pour suivre tes poids. — Max</span></p>
-    <h2><span class="en">The only 3 rules</span><span class="fr">Les 3 seules règles</span></h2>
-    <div class="rules">
-      <div class="rule"><span class="rtitle"><span class="en">1 · Hard but clean</span><span class="fr">1 · Dur mais propre</span></span>
-        <p class="en">Every set: aim for <b>8–10 reps</b>. Stop only when you're 1–2 reps away from not being able to lift it. If it never gets hard, it doesn't count.</p>
-        <p class="fr">Chaque série : vise <b>8-10 reps</b>. Arrête-toi seulement quand il te reste 1-2 reps avant de ne plus pouvoir soulever. Si c'est jamais dur, ça compte pas.</p></div>
-      <div class="rule"><span class="rtitle"><span class="en">2 · Same weight, then level up</span><span class="fr">2 · Même poids, puis monte</span></span>
-        <p class="en">Keep the <b>same weight</b> for all sets of an exercise. More than 10 reps on your first set → go one step heavier next time. Under 6 → go lighter.</p>
-        <p class="fr">Garde le <b>même poids</b> sur toutes les séries d'un exo. Plus de 10 reps à la première série → monte d'un cran la prochaine fois. Moins de 6 → descends.</p></div>
-      <div class="rule"><span class="rtitle"><span class="en">3 · Full range, full control, own the negative</span><span class="fr">3 · Amplitude complète, maîtrise la négative</span></span>
-        <p class="en">All the way down, all the way up, no swinging. And control the weight on the way back. <b>Never let it snap back</b>. That return half of the rep (the negative) builds as much muscle as the lift. If you have to cheat, it's too heavy.</p>
-        <p class="fr">Tout en bas, tout en haut, sans élan. Et contrôle le poids au retour. <b>Ne le laisse jamais claquer en arrière</b>. Cette moitié retour (la négative) construit autant de muscle que la montée. Si tu dois tricher, c'est trop lourd.</p></div>
-    </div>
-    <details class="note tip"><summary><b><span class="en">Rest: 3 minutes between sets. Every set, every exercise.</span><span class="fr">Repos : 3 minutes entre les séries. Chaque série, chaque exo.</span></b></summary>
-      <p class="en">Golden rule, easy to remember. If your second set collapses compared to your first, you didn't wait long enough. Put a timer on, put music in, and actually wait.</p>
-      <p class="fr">Règle d'or, facile à retenir. Si ta deuxième série s'effondre par rapport à la première, t'as pas attendu assez. Mets un chrono, mets ta musique, et attends vraiment.</p>
-      <p class="en">Going non-stop and giving it everything feels like progress. It's the opposite: you grow by taking your time, resting properly, and doing every movement right. I learned that one the hard way.</p>
-      <p class="fr">Enchaîner non-stop à fond, ça ressemble à du progrès. C'est l'inverse : tu progresses en prenant ton temps, en récupérant bien et en faisant chaque mouvement correctement. Je l'ai appris à mes dépens.</p></details>
-    <details class="note tip"><summary><b><span class="en">I checked every video myself. Watch them for real.</span><span class="fr">J'ai vérifié chaque vidéo moi-même. Regarde-les vraiment.</span></b></summary>
-      <p class="en">Tap ▶ under each exercise. The long ones are long because they're packed with details. 2 minutes of watching saves weeks of doing it wrong.</p>
-      <p class="fr">Tape ▶ sous chaque exo. Les longues sont longues parce qu'elles sont pleines de détails. 2 minutes de vidéo t'évitent des semaines à mal faire.</p></details>
-    <button id="quizbtn" type="button" class="bigbtn">📝 <span class="en">Test: where are you at, honestly?</span><span class="fr">Test : où t'en es, honnêtement ?</span></button>
+    <p class="byline"><span class="en">I made this for you. One question, one answer — tap the one you need. — Max</span><span class="fr">Je t'ai fait ça. Une question, une réponse — tape celle dont t'as besoin. — Max</span></p>
+    <h2><span class="en">Your questions</span><span class="fr">Tes questions</span></h2>
+    <details class="note"><summary><b><span class="en">How long do I rest between sets?</span><span class="fr">Combien de repos entre les séries ?</span></b></summary>
+      <p class="en"><b>3 minutes, with a timer.</b> Every set, every exercise. If your second set collapses, you didn't wait enough. Going non-stop feels like progress — it's the opposite.</p>
+      <p class="fr"><b>3 minutes, au chrono.</b> Chaque série, chaque exo. Si ta 2e série s'effondre, t'as pas attendu assez. Enchaîner non-stop ressemble à du progrès — c'est l'inverse.</p></details>
+    <details class="note"><summary><b><span class="en">How many reps per set?</span><span class="fr">Combien de reps par série ?</span></b></summary>
+      <p class="en"><b>Aim for 8–10</b>, stopping 1–2 reps before failure. If it never gets hard, it doesn't count.</p>
+      <p class="fr"><b>Vise 8-10</b>, en t'arrêtant à 1-2 reps de l'échec. Si c'est jamais dur, ça compte pas.</p></details>
+    <details class="note"><summary><b><span class="en">When do I go heavier?</span><span class="fr">Quand est-ce que je monte le poids ?</span></b></summary>
+      <p class="en">Same weight for all sets of an exercise. <b>Over 10 reps on your first set → one step heavier</b> next time. Under 6 → one step lighter.</p>
+      <p class="fr">Même poids sur toutes les séries d'un exo. <b>Plus de 10 reps à la 1re série → un cran de plus</b> la fois d'après. Moins de 6 → un cran de moins.</p></details>
+    <details class="note"><summary><b><span class="en">What's a clean rep?</span><span class="fr">C'est quoi une rep propre ?</span></b></summary>
+      <p class="en"><b>Full range</b> (all the way down, all the way up), <b>no swinging</b>, and <b>hold the way back</b> — the lowering half builds as much muscle as the lift. If you have to cheat, it's too heavy.</p>
+      <p class="fr"><b>Toute l'amplitude</b> (tout en bas, tout en haut), <b>sans élan</b>, et <b>retiens la descente</b> — la moitié retour construit autant de muscle que la montée. Si tu dois tricher, c'est trop lourd.</p></details>
+    <details class="note"><summary><b><span class="en">Starter or full program?</span><span class="fr">Starter ou programme complet ?</span></b></summary>
+      <p class="en"><b>Starter for the first month</b>: light weights, learn the movements, find your 8–10 rep weight. Comfortable after ~a month → switch to Full. Regular beats heroic.</p>
+      <p class="fr"><b>Starter le premier mois</b> : poids légers, apprendre les mouvements, trouver ton poids à 8-10 reps. À l'aise après ~un mois → passe au complet. Régulier bat héroïque.</p></details>
+    <details class="note"><summary><b><span class="en">Why this day order?</span><span class="fr">Pourquoi cet ordre de jours ?</span></b></summary>
+      <p class="en">Legs sit <b>between</b> chest/back and arms on purpose: your arms help on every press and pull of Day 1 — leg day gives them 48h to recover before their own day.</p>
+      <p class="fr">Les jambes sont <b>entre</b> pecs/dos et bras exprès : tes bras aident sur chaque poussée et tirage du Day 1 — le jour jambes leur laisse 48h de récup avant leur propre jour.</p></details>
+    <details class="note"><summary><b><span class="en">Is the rest day really mandatory?</span><span class="fr">Le jour de repos, vraiment obligatoire ?</span></b></summary>
+      <p class="en"><b>Yes.</b> That's the day the muscle you trained actually grows. Skipping it doesn't speed you up, it slows you down. No "small bonus session".</p>
+      <p class="fr"><b>Oui.</b> C'est ce jour-là que le muscle que t'as entraîné pousse. Le sauter ne t'accélère pas, ça te ralentit. Pas de « petite séance bonus ».</p></details>
+    <details class="note"><summary><b><span class="en">Big lifts vs isolation — what's the difference?</span><span class="fr">Gros exos vs isolation, quelle différence ?</span></b></summary>
+      <p class="en">Silver outline = <b>big lifts</b>: most muscle, most energy — do them first, while you're fresh. The rest is isolation, to finish every part of the muscle.</p>
+      <p class="fr">Contour argenté = <b>gros exos</b> : le plus de muscle, le plus d'énergie — fais-les en premier, quand t'es frais. Le reste, c'est l'isolation, pour finir chaque partie du muscle.</p></details>
+    <details class="note"><summary><b><span class="en">Do I really need the videos?</span><span class="fr">Les vidéos, je suis obligé ?</span></b></summary>
+      <p class="en">2 minutes of video saves <b>weeks of doing it wrong</b>. Tap ▶ under the exercise whenever you're not sure. I checked every one myself.</p>
+      <p class="fr">2 minutes de vidéo t'évitent <b>des semaines à mal faire</b>. Tape ▶ sous l'exo dès que t'as un doute. Je les ai toutes vérifiées moi-même.</p></details>
+    <details class="note"><summary><b><span class="en">What do I check before each set?</span><span class="fr">Avant chaque série, je vérifie quoi ?</span></b></summary>
+      <p class="en"><b>1</b> I know the movement (else: video). <b>2</b> Weight light enough to control every centimetre. <b>3</b> Full range. <b>4</b> Slow negative. <b>5</b> 8–10 hard but clean reps — then 3 full minutes of rest.</p>
+      <p class="fr"><b>1</b> Je connais le mouvement (sinon : vidéo). <b>2</b> Poids assez léger pour tout contrôler. <b>3</b> Amplitude complète. <b>4</b> Descente lente. <b>5</b> 8-10 reps dures mais propres — puis 3 vraies minutes de repos.</p></details>
+    <details class="note"><summary><b><span class="en">Can the program change?</span><span class="fr">Le programme peut changer ?</span></b></summary>
+      <p class="en">Yes — I'm still learning too, and I sometimes swap an exercise for a better one. The app updates itself next time you open it.</p>
+      <p class="fr">Oui — j'apprends encore moi aussi, et je remplace parfois un exo par un meilleur. L'app se met à jour toute seule à l'ouverture suivante.</p></details>
+    <button id="teststo" type="button" class="bigbtn">📝 <span class="en">The tests: where are you at?</span><span class="fr">Les tests : où t'en es ?</span></button>
   </section>
 
   <section class="sec-prog">
@@ -409,27 +451,10 @@
     <button id="resetweek" type="button" class="bigbtn"></button>
   </section>
 
-  <section class="sec-rules">
-    <h2><span class="en">Why I built it this way</span><span class="fr">Pourquoi c'est construit comme ça</span></h2>
-    <div class="why">
-      <p class="en">Each day starts with the <b>big lifts</b> (silver outline): they use the most muscle and take the most energy, so you do them while you're fresh. Then come the <b>isolation exercises</b> to finish working every part of the muscle. Heavy first, details after.</p>
-      <p class="fr">Chaque jour commence par les <b>gros exos</b> (contour argenté) : ils utilisent le plus de muscle et demandent le plus d'énergie, tu les fais frais. Ensuite viennent les <b>exos d'isolation</b> pour finir de travailler chaque partie du muscle. Le lourd d'abord, les détails après.</p>
-      <p class="en">Legs sit <b>between</b> chest/back day and arms day on purpose: your arms help on every press and pull of Day 1, so the leg day gives them 48 hours to recover before their own day.</p>
-      <p class="fr">Les jambes sont <b>entre</b> le jour pecs/dos et le jour bras exprès : tes bras aident sur chaque poussée et tirage du Day 1, le jour jambes leur laisse 48h de récup avant leur propre jour.</p>
-      <p class="en">I'm still learning too, so I sometimes swap an exercise for a better one. When the program changes, I'll send you an update.</p>
-      <p class="fr">J'apprends encore moi aussi, donc je change parfois un exo pour un meilleur. Quand le programme change, je t'envoie une mise à jour.</p>
-    </div>
-  </section>
-
-  <section class="sec-rules">
-    <h2><span class="en">Run this in your head, every exercise</span><span class="fr">Déroule ça dans ta tête, à chaque exo</span></h2>
-    <div class="why">
-      <p><b>1.</b> <span class="en">Do I know the movement? (If not → watch the video again.)</span><span class="fr">Je connais le mouvement ? (Sinon → revois la vidéo.)</span></p>
-      <p><b>2.</b> <span class="en">Is the weight light enough that I control every centimetre?</span><span class="fr">Le poids est assez léger pour que je contrôle chaque centimètre ?</span></p>
-      <p><b>3.</b> <span class="en">Full range: all the way down, all the way up.</span><span class="fr">Amplitude complète : tout en bas, tout en haut.</span></p>
-      <p><b>4.</b> <span class="en">Slow negative: never let the weight just drop.</span><span class="fr">Négative lente : ne jamais laisser tomber le poids.</span></p>
-      <p><b>5.</b> <span class="en">8–10 reps, hard but clean. Then rest your full 3 minutes.</span><span class="fr">8-10 reps, dur mais propre. Puis repose-toi tes 3 minutes complètes.</span></p>
-    </div>
+  <section class="sec-tests">
+    <h2>Tests</h2>
+    <p class="byline"><span class="en">Rate yourself 1 to 5, honestly. Results stay on your device — nobody else sees them.</span><span class="fr">Note-toi de 1 à 5, franchement. Les résultats restent sur ton appareil — personne d'autre ne les voit.</span></p>
+    <div id="testslist"></div>
   </section>
 
   <section class="sec-account">
@@ -465,6 +490,8 @@
       <div class="seg" id="langseg"><button data-v="en" type="button">EN</button><button data-v="fr" type="button">FR</button></div></div>
     <div class="setrow"><span class="setlabel"><span class="en">Units</span><span class="fr">Unités</span></span>
       <div class="seg" id="unitseg"><button data-v="kg" type="button">kg</button><button data-v="lbs" type="button">lbs</button></div></div>
+    <div class="setrow"><span class="setlabel"><span class="en">Reminders during workouts</span><span class="fr">Rappels pendant la séance</span></span>
+      <div class="seg" id="remindseg"><button data-v="on" type="button"><span class="en">On</span><span class="fr">Oui</span></button><button data-v="off" type="button"><span class="en">Off</span><span class="fr">Non</span></button></div></div>
   </section>
 
   <footer><span class="en">Questions → text me.</span><span class="fr">Des questions → écris-moi.</span></footer>
@@ -475,6 +502,7 @@
   <nav>
     <button data-view="prog" type="button">📋 <span class="en">Program</span><span class="fr">Programme</span></button>
     <button data-view="rules" type="button">📖 <span class="en">Rules &amp; tips</span><span class="fr">Règles &amp; conseils</span></button>
+    <button data-view="tests" type="button">📝 Tests</button>
     <button data-view="account" type="button">👤 <span class="en">Account</span><span class="fr">Compte</span></button>
     <button data-view="settings" type="button">⚙️ <span class="en">Settings</span><span class="fr">Paramètres</span></button>
     <button id="installbtn" type="button" hidden>📲 <span class="en">Install the app</span><span class="fr">Installer l'app</span></button>
@@ -483,6 +511,7 @@
 <div id="scrim"></div>
 
 <div id="quizmodal"><div class="imbox qzbox"><div id="qzbody"></div></div></div>
+<div id="toast"></div>
 
 <div id="installmodal"><div class="imbox">
   <div class="imtitle">📲 <span class="en">Install the app</span><span class="fr">Installer l'app</span></div>
@@ -510,19 +539,10 @@
 <div id="loginscr"><div class="loginbox">
   <div class="loginlangrow"><div class="seg" id="loginlangseg"><button data-v="en" type="button">EN</button><button data-v="fr" type="button">FR</button></div></div>
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
-  <div id="loginmodes">
-    <button id="lm-connect" type="button"><span class="en">Log in</span><span class="fr">Se connecter</span></button>
-    <button id="lm-create" type="button"><span class="en">Create a profile</span><span class="fr">Créer un compte</span></button>
-  </div>
-  <div id="loginconnect" class="lsec">
-    <input id="loginsearch" maxlength="14" autocomplete="off">
-    <div id="loginlist"></div>
-  </div>
-  <div id="logincreate" class="lsec">
-    <div class="lform"><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">OK</button></div>
-  </div>
+  <div id="loginlist"></div>
+  <button id="lognew" type="button" class="lnew">＋ <span class="en">New profile</span><span class="fr">Nouveau profil</span></button>
+  <div class="lform" id="logform" hidden><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">OK</button></div>
   <label class="keepbox"><input type="checkbox" id="keeplogged" checked> <span class="en">Stay logged in on this device</span><span class="fr">Rester connecté sur cet appareil</span></label>
-  <p class="lhint"><span class="en">Weights and ticks save automatically, per profile, on this device.</span><span class="fr">Poids et coches se sauvegardent automatiquement, par profil, sur cet appareil.</span></p>
 </div></div>
 
 <script>
@@ -626,9 +646,7 @@
     if(isCustom) document.getElementById("prof-rename").textContent=(isFr()?"✎ Renommer ":"✎ Rename ")+profile;
     document.getElementById("logoutbtn").textContent=isFr()?"Déconnexion":"Log out";
     var li=document.getElementById("loginname");
-    if(li && li.placeholder.indexOf("!")===-1) li.placeholder=isFr()?"Nom du profil…":"Profile name…";
-    var ls=document.getElementById("loginsearch");
-    if(ls) ls.placeholder=isFr()?"Tape ton prénom…":"Type your name…";
+    if(li && li.placeholder.indexOf("!")===-1) li.placeholder=isFr()?"Ton prénom…":"Your name…";
     if(weekArmed==null) resetWeekLabel();
   }
   var weekArmed=null;
@@ -659,39 +677,28 @@
     refreshTicks(); refreshWeights(); refreshProfActions(); refreshAdmin();
     setTimeout(function(){ try{ maybeProposeQuiz(); }catch(e){} },400);
   }
-  function setLoginMode(m){
-    document.getElementById("lm-connect").classList.toggle("active",m==="connect");
-    document.getElementById("lm-create").classList.toggle("active",m==="create");
-    document.getElementById("loginconnect").classList.toggle("show",m==="connect");
-    document.getElementById("logincreate").classList.toggle("show",m==="create");
-    if(m==="connect") document.getElementById("loginsearch").focus();
-    else document.getElementById("loginname").focus();
-  }
-  document.getElementById("lm-connect").addEventListener("click",function(){ setLoginMode("connect"); });
-  document.getElementById("lm-create").addEventListener("click",function(){ setLoginMode("create"); });
-  function renderSuggestions(){
-    var q=document.getElementById("loginsearch").value.trim().toLowerCase();
+  function renderLoginList(){
     var list=document.getElementById("loginlist");
     list.innerHTML="";
-    if(!q) return;
     allProfiles().forEach(function(p){
-      if(p.toLowerCase().indexOf(q)===0){
-        var b=document.createElement("button"); b.type="button"; b.textContent=p;
-        b.addEventListener("click",function(){ doLogin(p); });
-        list.appendChild(b);
-      }
+      var b=document.createElement("button"); b.type="button"; b.textContent=p;
+      b.addEventListener("click",function(){ doLogin(p); });
+      list.appendChild(b);
     });
   }
-  document.getElementById("loginsearch").addEventListener("input",renderSuggestions);
   function doLogin(p){
     persistLogin=document.getElementById("keeplogged").checked;
     setProfile(p);
-    document.getElementById("loginsearch").value="";
-    document.getElementById("loginlist").innerHTML="";
+    document.getElementById("logform").hidden=true;
+    document.getElementById("loginname").value="";
     loginscr.classList.remove("show");
     setView("prog");
   }
-  function showLogin(){ setLoginMode("connect"); loginscr.classList.add("show"); }
+  function showLogin(){ renderLoginList(); loginscr.classList.add("show"); }
+  document.getElementById("lognew").addEventListener("click",function(){
+    document.getElementById("logform").hidden=false;
+    document.getElementById("loginname").focus();
+  });
   document.getElementById("login-add").addEventListener("click",function(){
     var inp=document.getElementById("loginname");
     var name=inp.value.trim().slice(0,14);
@@ -801,6 +808,7 @@
       b.classList.toggle("active", b.getAttribute("data-view")===v);
     });
     closeDrawer();
+    if(v==="tests") renderTestsList();
     window.scrollTo(0,0);
   }
   document.querySelectorAll("#drawer nav button[data-view]").forEach(function(b){
@@ -854,7 +862,7 @@
         state[k]=exo.classList.contains("done");
         saveState();
         refreshCounts();
-        if(exo.classList.contains("done")) pingActivity();
+        if(exo.classList.contains("done")){ pingActivity(); maybeSessionReminder(); }
         if(exo.classList.contains("done")){
           var bx=exo.querySelector(".box");
           bx.classList.remove("pop"); void bx.offsetWidth; bx.classList.add("pop");
@@ -1064,131 +1072,291 @@
   acttoday.addEventListener("keydown",function(ev){ if(ev.key===" "||ev.key==="Enter"){ ev.preventDefault(); toggleActGrid(); } });
   loadActivity();
 
-  var QZKEY="romain-gym-quiz";
-  var QUIZ=[
-    {fr:"Entre deux séries, j'attends vraiment 3 minutes — au chrono, pas au feeling.",
-     en:"Between sets I really wait 3 minutes — with a timer, not by feel.",
-     cfr:"Mets un vrai chrono. Si ta 2e série s'effondre par rapport à la première, c'est ça la raison.",
-     cen:"Use an actual timer. If your second set collapses compared to the first, that's why."},
-    {fr:"Je fais l'amplitude complète : tout en bas, tout en haut, à chaque rep.",
-     en:"I use the full range of motion: all the way down, all the way up, every rep.",
-     cfr:"Une demi-rep construit un demi-muscle. Baisse le poids s'il le faut.",
-     cen:"Half a rep builds half a muscle. Lower the weight if you must."},
-    {fr:"Je redescends le poids lentement et en contrôle, au lieu de le laisser retomber d'un coup.",
-     en:"I lower the weight slowly and under control, instead of letting it drop back.",
-     cfr:"La descente construit autant de muscle que la montée. Retiens-la, à chaque rep.",
-     cen:"The lowering half builds as much muscle as the lift. Own it, every rep."},
-    {fr:"Je garde le même poids sur toutes les séries d'un exo, et je ne monte que passé 10 reps.",
-     en:"I keep the same weight for all sets of an exercise, and only go heavier past 10 reps.",
-     cfr:"Même poids partout, un cran de plus quand tu dépasses 10 reps. C'est toute ta règle de progression.",
-     cen:"Same weight everywhere, one step up once you pass 10 reps. That's your whole progression rule."},
-    {fr:"Mes dernières reps sont vraiment dures (à 1-2 reps de ne plus pouvoir).",
-     en:"My last reps are genuinely hard (1-2 reps away from failing).",
-     cfr:"Si ce n'est jamais dur, ça ne compte pas. Approche-toi de l'échec, proprement.",
-     cen:"If it never gets hard, it doesn't count. Get close to failure, cleanly."},
-    {fr:"Je tiens le rythme de séances que je me suis fixé (ex. 3 ou 5 par semaine).",
-     en:"I stick to the training schedule I set for myself (e.g. 3 or 5 sessions a week).",
-     cfr:"La régularité bat tout le reste. Mieux valent 3 séances tenues que 5 imaginées.",
-     cen:"Consistency beats everything else. 3 sessions you actually do beat 5 you planned."},
-    {fr:"Quand je ne suis pas sûr d'un mouvement, je regarde la vidéo avant de le faire.",
-     en:"When I'm not sure about a movement, I watch the video before doing it.",
-     cfr:"2 minutes de vidéo t'évitent des semaines à mal faire. Les boutons ▶ sont là pour ça.",
-     cen:"2 minutes of video saves weeks of doing it wrong. That's what the ▶ buttons are for."},
-    {fr:"Je prends mon jour de repos complet, sans « petite séance bonus ».",
-     en:"I take my full rest day, no sneaky bonus session.",
-     cfr:"Le muscle pousse pendant le repos. Sauter le jour off te ralentit, il ne t'accélère pas.",
-     cen:"Muscle grows during rest. Skipping the off day slows you down, it doesn't speed you up."}
-  ];
+  var QZBASE="romain-gym-quiz", RMKEY="romain-gym-remind";
+  var QZORDER=["gym","recup","motiv"];
+  var QZDATA={
+    gym:{ icon:"🏋️", tfr:"Entraînement", ten:"Training",
+      q:[
+        {sfr:"Repos 3 min", sen:"3 min rest",
+         fr:"Entre deux séries, j'attends vraiment 3 minutes (chrono).",
+         en:"Between sets, I really wait 3 minutes (timer).",
+         wfr:"Le muscle a besoin de recharger avant la série suivante — sinon elle s'effondre et construit moins. Tout le monde zappe ce temps, même en le sachant : mets un chrono, c'est le fix le plus rentable du guide.",
+         wen:"Muscle needs to recharge before the next set — otherwise it collapses and builds less. Everyone skips this, even knowing better: set a timer, it's the single best fix in this guide."},
+        {sfr:"Amplitude complète", sen:"Full range",
+         fr:"Je fais toute l'amplitude : tout en bas, tout en haut.",
+         en:"I use the full range: all the way down, all the way up.",
+         wfr:"Une demi-rep construit un demi-muscle. Si l'amplitude complète est impossible, c'est que le poids est trop lourd — et c'est OK de le baisser.",
+         wen:"Half a rep builds half a muscle. If full range is impossible, the weight is too heavy — and it's fine to lower it."},
+        {sfr:"Négative contrôlée", sen:"Controlled negative",
+         fr:"Je redescends le poids lentement, sans le laisser retomber.",
+         en:"I lower the weight slowly, without letting it drop.",
+         wfr:"La descente construit autant de muscle que la montée — la lâcher, c'est jeter la moitié de ta série. Personne n'y pense naturellement : c'est un réflexe à installer.",
+         wen:"The lowering builds as much muscle as the lift — dropping it throws away half your set. Nobody does this naturally: it's a reflex you install."},
+        {sfr:"Même poids, progression", sen:"Same weight, progress",
+         fr:"Même poids sur toutes les séries ; je monte passé 10 reps.",
+         en:"Same weight on all sets; I go heavier past 10 reps.",
+         wfr:"C'est toute ta règle de progression : même poids partout, un cran de plus quand tu dépasses 10 reps à la première série. Simple, mais il faut la suivre pour progresser.",
+         wen:"That's your whole progression rule: same weight everywhere, one step up once you pass 10 reps on set one. Simple, but you have to actually follow it to progress."},
+        {sfr:"Intensité", sen:"Intensity",
+         fr:"Mes dernières reps sont vraiment dures (1-2 de marge).",
+         en:"My last reps are genuinely hard (1-2 in reserve).",
+         wfr:"Si ce n'est jamais dur, le muscle n'a aucune raison de grandir. S'arrêter trop tôt est l'erreur la plus fréquente — et la plus invisible, parce que la séance a quand même « eu lieu ».",
+         wen:"If it never gets hard, the muscle has no reason to grow. Stopping too early is the most common mistake — and the most invisible one, because the session still 'happened'."},
+        {sfr:"Rythme tenu", sen:"Schedule kept",
+         fr:"Je tiens le rythme de séances que je me suis fixé.",
+         en:"I stick to the training schedule I set for myself.",
+         wfr:"La régularité bat tout le reste. Mieux valent 3 séances tenues que 5 imaginées — et rater une fois n'est pas grave, tant que tu reprends à la suivante.",
+         wen:"Consistency beats everything else. 3 sessions you do beat 5 you planned — and missing one is fine, as long as you're back for the next."},
+        {sfr:"Vidéos", sen:"Videos",
+         fr:"Je regarde la vidéo quand je ne suis pas sûr d'un mouvement.",
+         en:"I watch the video when I'm not sure about a movement.",
+         wfr:"2 minutes de vidéo évitent des semaines à mal faire — et des blessures. Les boutons ▶ sont sous chaque exo pour ça.",
+         wen:"2 minutes of video saves weeks of doing it wrong — and injuries. That's what the ▶ buttons under each exercise are for."},
+        {sfr:"Jour de repos", sen:"Rest day",
+         fr:"Je prends mon jour de repos complet, sans séance bonus.",
+         en:"I take my full rest day, no bonus session.",
+         wfr:"Le muscle pousse pendant le repos, pas pendant la séance. Sauter le jour off ralentit tes résultats — même si l'envie d'y aller part d'une bonne intention.",
+         wen:"Muscle grows during rest, not during the workout. Skipping the off day slows your results — even if wanting to go comes from a good place."}
+      ]},
+    recup:{ icon:"🌙", tfr:"Récup & nutrition", ten:"Recovery & nutrition",
+      q:[
+        {sfr:"Sommeil 7-8 h", sen:"Sleep 7-8h",
+         fr:"Je dors 7-8 heures la plupart des nuits.",
+         en:"I sleep 7-8 hours most nights.",
+         wfr:"C'est pendant le sommeil que le muscle se construit. En dessous de 7 h, la récup baisse et la faim se dérègle. La séance parfaite ne rattrape pas les nuits courtes.",
+         wen:"Muscle is built during sleep. Under 7 hours, recovery drops and hunger goes haywire. A perfect workout doesn't make up for short nights."},
+        {sfr:"Protéines", sen:"Protein",
+         fr:"Il y a une source de protéines à chaque repas.",
+         en:"There's a protein source in every meal.",
+         wfr:"Sans protéines régulières, la séance ne se transforme pas en muscle. Viande, œufs, poisson, laitages, légumineuses — pas besoin de poudre pour commencer.",
+         wen:"Without regular protein, workouts don't turn into muscle. Meat, eggs, fish, dairy, legumes — no powder needed to start."},
+        {sfr:"Manger assez", sen:"Eating enough",
+         fr:"Je mange à ma faim, sans sauter de repas.",
+         en:"I eat properly, without skipping meals.",
+         wfr:"Construire du muscle coûte des calories. Un repas sauté, c'est de la récup en moins — souvent par oubli plus que par choix.",
+         wen:"Building muscle costs calories. A skipped meal is lost recovery — usually forgotten rather than chosen."},
+        {sfr:"Eau", sen:"Water",
+         fr:"Je bois de l'eau régulièrement dans la journée.",
+         en:"I drink water regularly through the day.",
+         wfr:"Même une légère déshydratation fait baisser la force. Une gourde à portée de main règle le problème sans y penser.",
+         wen:"Even mild dehydration lowers strength. A bottle within reach solves it without thinking."},
+        {sfr:"Repas post-séance", sen:"Post-workout meal",
+         fr:"Je mange un vrai repas dans les heures après la séance.",
+         en:"I eat a real meal within hours after training.",
+         wfr:"Après la séance, ton corps réclame des matériaux. Pas besoin de shaker minuté à la seconde — un vrai repas dans les heures qui suivent suffit.",
+         wen:"After training your body asks for building material. No need for a shake timed to the second — a real meal within a few hours is enough."},
+        {sfr:"Soirées", sen:"Nights out",
+         fr:"Mes soirées ne sabotent pas mes séances (alcool, coucher très tard).",
+         en:"My evenings don't sabotage my training (alcohol, very late nights).",
+         wfr:"L'alcool et les nuits courtes cassent le sommeil profond, donc la récup. Pas besoin de vivre comme un moine — juste d'être régulier la plupart du temps.",
+         wen:"Alcohol and short nights break deep sleep, so recovery. No need to live like a monk — just be consistent most of the time."},
+        {sfr:"Le soir", sen:"Evenings",
+         fr:"Le soir, j'évite ce qui retarde mon sommeil (café tard, écrans sans fin).",
+         en:"In the evening I avoid what delays my sleep (late coffee, endless scrolling).",
+         wfr:"Le café reste des heures dans le corps, et l'écran repousse l'endormissement sans qu'on s'en rende compte. Ce sont des heures de récup perdues en silence.",
+         wen:"Caffeine stays in your system for hours, and screens push sleep back without you noticing. Those are recovery hours lost silently."},
+        {sfr:"Horaires réguliers", sen:"Regular schedule",
+         fr:"Je me couche à peu près à la même heure.",
+         en:"I go to bed at roughly the same time.",
+         wfr:"Le corps récupère mieux quand les horaires sont stables — même durée de sommeil, meilleure qualité.",
+         wen:"Your body recovers better on a stable schedule — same sleep duration, better quality."}
+      ]},
+    motiv:{ icon:"🔥", tfr:"Motivation & régularité", ten:"Motivation & consistency",
+      q:[
+        {sfr:"Objectif clair", sen:"Clear goal",
+         fr:"Je sais pourquoi je m'entraîne (un objectif à moi).",
+         en:"I know why I train (a goal that's mine).",
+         wfr:"Un « pourquoi » précis tient mieux qu'une obligation vague. Écris-le quelque part — c'est lui qui te sort du lit les mauvais jours.",
+         wen:"A precise 'why' holds better than a vague obligation. Write it down — it's what gets you up on bad days."},
+        {sfr:"Séances planifiées", sen:"Planned sessions",
+         fr:"Mes séances sont posées à l'avance (jours fixes ou cycle).",
+         en:"My sessions are set in advance (fixed days or a cycle).",
+         wfr:"Décider sur le moment, c'est laisser la flemme voter. Un créneau fixe supprime la négociation — tu n'y penses même plus.",
+         wen:"Deciding in the moment lets laziness vote. A fixed slot removes the negotiation — you stop even thinking about it."},
+        {sfr:"Reprise après un raté", sen:"Bouncing back",
+         fr:"Si je saute une séance, je reprends dès la suivante.",
+         en:"If I miss a session, I'm back for the very next one.",
+         wfr:"Rater une séance n'a jamais ruiné personne — c'est la spirale « foutu pour foutu » qui coûte. La seule règle : jamais deux ratés d'affilée.",
+         wen:"Missing one session never ruined anyone — it's the 'screw it' spiral that costs. The only rule: never two misses in a row."},
+        {sfr:"Comparaison", sen:"Comparison",
+         fr:"Je me compare à mon moi d'avant, pas aux autres.",
+         en:"I compare myself to my past self, not to others.",
+         wfr:"Il y aura toujours plus fort que toi dans la salle. Ta seule vraie mesure : toi il y a 3 mois. C'est pour ça que l'app garde tes poids.",
+         wen:"There will always be someone stronger in the gym. Your only real measure: you, 3 months ago. That's why the app keeps your weights."},
+        {sfr:"Agir sans envie", sen:"Acting without motivation",
+         fr:"J'y vais même sans envie — l'envie revient en séance.",
+         en:"I go even without motivation — it comes back mid-session.",
+         wfr:"La motivation suit l'action, pas l'inverse. Les 10 premières minutes décident de tout : commence, le reste suit.",
+         wen:"Motivation follows action, not the other way round. The first 10 minutes decide everything: start, the rest follows."},
+        {sfr:"Système facile", sen:"Easy system",
+         fr:"Je me facilite la vie (sac prêt, créneau fixe, pote de salle).",
+         en:"I make it easy for myself (bag ready, fixed slot, gym buddy).",
+         wfr:"La discipline s'use ; un bon système ne s'use pas. Moins de frictions avant la séance = plus de séances faites.",
+         wen:"Discipline wears out; a good system doesn't. Less friction before the session = more sessions done."},
+        {sfr:"Progrès mesurés", sen:"Measured progress",
+         fr:"Je mesure mes progrès (poids notés, photos).",
+         en:"I measure my progress (logged weights, photos).",
+         wfr:"Le miroir du jour ment ; les chiffres, non. Voir la barre monter est une des meilleures sources de motivation qui existent.",
+         wen:"The daily mirror lies; numbers don't. Watching the bar go up is one of the best motivation sources there is."},
+        {sfr:"Vision long terme", sen:"Long game",
+         fr:"Je vois ça sur des années, pas sur 8 semaines.",
+         en:"I see this as years, not an 8-week sprint.",
+         wfr:"Le corps change lentement, puis d'un coup. Ceux qui gagnent sont simplement ceux qui sont encore là dans un an.",
+         wen:"The body changes slowly, then all at once. The people who win are simply the ones still here in a year."}
+      ]}
+  };
   var VALW_FR=["","1 · Jamais","2 · Rarement","3 · Parfois","4 · Souvent","5 · Toujours"];
   var VALW_EN=["","1 · Never","2 · Rarely","3 · Sometimes","4 · Often","5 · Always"];
   var quizmodal=document.getElementById("quizmodal");
   var qzbody=document.getElementById("qzbody");
-  var qzAnswers=[], qzStep=-1, qzMode="first";
+  var qzState={id:"gym",step:-1,answers:[],mode:"first"};
   function qzT(fr,en){ return isFr()?fr:en; }
-  function qzRec(){ try{ return JSON.parse(localStorage.getItem(pk(QZKEY)))||{}; }catch(e){ return {}; } }
-  function qzSave(rec){ try{ localStorage.setItem(pk(QZKEY),JSON.stringify(rec)); }catch(e){} }
-  function openQuiz(mode){
-    qzMode=mode||"first"; qzStep=-1;
-    qzAnswers=QUIZ.map(function(){ return 3; });
-    renderQuiz(); quizmodal.classList.add("show");
+  function qzKey(id){ return pk(id==="gym"?QZBASE:QZBASE+"-"+id); }
+  function qzRec(id){ try{ return JSON.parse(localStorage.getItem(qzKey(id)))||{}; }catch(e){ return {}; } }
+  function qzSave(id,rec){ try{ localStorage.setItem(qzKey(id),JSON.stringify(rec)); }catch(e){} }
+  function qzOpen(id,mode){
+    qzState={ id:id, mode:mode||"manual",
+      step:(mode==="first"||mode==="redo")?-1:0,
+      answers:QZDATA[id].q.map(function(){ return 3; }) };
+    qzRender(); quizmodal.classList.add("show");
   }
-  function closeQuiz(snooze){
+  function qzClose(snooze){
     quizmodal.classList.remove("show");
-    if(snooze){ var rec=qzRec(); rec.snooze=Date.now(); qzSave(rec); }
+    if(snooze){ var rec=qzRec("gym"); rec.snooze=Date.now(); qzSave("gym",rec); }
   }
   var quizProposed=false;
   function maybeProposeQuiz(){
     if(quizProposed||!profile||!loginscr||loginscr.classList.contains("show")) return;
-    var rec=qzRec(), now=Date.now();
+    var rec=qzRec("gym"), now=Date.now();
     if(rec.snooze && now-rec.snooze<7*864e5) return;
     if(rec.last && now-rec.last<30*864e5) return;
     quizProposed=true;
-    openQuiz(rec.last?"redo":"first");
+    qzOpen("gym", rec.last?"redo":"first");
   }
-  function renderQuiz(){
-    var h="";
-    if(qzStep===-1){
-      h+="<div class='imtitle'>📝 "+qzT("Où t'en es, honnêtement ?","Where are you at, honestly?")+"</div>";
-      h+="<p>"+(qzMode==="redo"
-        ? qzT("Ça fait un mois depuis ton dernier test. On refait le point ? Personne d'autre ne voit le résultat.","It's been a month since your last check. Do it again? Nobody else sees the result.")
-        : qzT("8 questions, 2 minutes. Note-toi de 1 à 5, franchement — personne d'autre ne voit le résultat.","8 questions, 2 minutes. Rate yourself 1 to 5, honestly — nobody else sees the result."))+"</p>";
-      h+="<div class='qzbtns'><button class='bigbtn primary' id='qz-start' type='button'>"+qzT("Faire le test","Take the test")+"</button><button class='bigbtn' id='qz-later' type='button'>"+qzT("Plus tard","Later")+"</button></div>";
-    } else if(qzStep<QUIZ.length){
-      var q=QUIZ[qzStep], v=qzAnswers[qzStep];
-      h+="<div class='qzstep'>"+(qzStep+1)+" / "+QUIZ.length+"</div>";
+  function qzRender(){
+    var d=QZDATA[qzState.id], n=d.q.length, h="";
+    if(qzState.step===-1){
+      h+="<div class='imtitle'>"+d.icon+" "+qzT("Où t'en es, honnêtement ?","Where are you at, honestly?")+"</div>";
+      h+="<p>"+(qzState.mode==="redo"
+        ? qzT("Ça fait un mois depuis ton dernier test. On refait le point ?","It's been a month since your last check. Do it again?")
+        : qzT("8 questions, 2 minutes. Personne d'autre ne voit le résultat.","8 questions, 2 minutes. Nobody else sees the result."))+"</p>";
+      h+="<div class='qzbtns'><button class='bigbtn primary' id='qz-start' type='button'>"+qzT("C'est parti","Let's go")+"</button><button class='bigbtn' id='qz-later' type='button'>"+qzT("Plus tard","Later")+"</button></div>";
+    } else if(qzState.step<n){
+      var q=d.q[qzState.step], v=qzState.answers[qzState.step];
+      h+="<div class='qzbar'><i style='width:"+Math.round((qzState.step)/n*100)+"%'></i></div>";
       h+="<div class='qzq'>"+qzT(q.fr,q.en)+"</div>";
       h+="<div class='qzval' id='qz-vallabel'>"+qzT(VALW_FR[v],VALW_EN[v])+"</div>";
       h+="<input type='range' class='qzslider' id='qz-range' min='1' max='5' step='1' value='"+v+"'>";
       h+="<div class='qzscale'><span>"+qzT("jamais","never")+"</span><span>"+qzT("toujours","always")+"</span></div>";
-      h+="<div class='qzbtns'>"+(qzStep>0?"<button class='bigbtn qback' id='qz-back' type='button'>←</button>":"")
-        +"<button class='bigbtn primary' id='qz-next' type='button'>"+(qzStep===QUIZ.length-1?qzT("Voir mon résultat","See my result"):qzT("Suivant","Next"))+"</button></div>";
+      h+="<div class='qzbtns'>"+(qzState.step>0?"<button class='bigbtn qback' id='qz-back' type='button'>←</button>":"")
+        +"<button class='bigbtn primary' id='qz-next' type='button'>"+(qzState.step===n-1?qzT("Voir mon résultat","See my result"):qzT("Suivant","Next"))+"</button></div>";
     } else {
-      var total=qzAnswers.reduce(function(a,b){ return a+b; },0), max=QUIZ.length*5;
+      var total=qzState.answers.reduce(function(a,b){ return a+b; },0), max=n*5;
       var verdict;
-      if(total>=36) verdict=qzT("Solide. Tu t'entraînes comme il faut — continue exactement comme ça.","Solid. You're training the right way — keep doing exactly this.");
-      else if(total>=28) verdict=qzT("Bonne base. Deux-trois habitudes à resserrer — elles sont là :","Good base. Two or three habits to tighten — here they are:");
-      else if(total>=20) verdict=qzT("Honnête — et c'est exactement pour ça que ce guide existe. Commence par ça :","Honest — and that's exactly what this guide is for. Start here:");
-      else verdict=qzT("Merci d'avoir été franc. La marge est énorme, et c'est une bonne nouvelle : chaque point ci-dessous, c'est des résultats en plus.","Thanks for being honest. The upside is huge — every point below means more results.");
-      h+="<div class='imtitle'>"+qzT("Ton résultat","Your result")+"</div>";
+      if(total>=36) verdict=qzT("Solide. Continue exactement comme ça.","Solid. Keep doing exactly this.");
+      else if(total>=28) verdict=qzT("Bonne base — quelques habitudes à resserrer.","Good base — a few habits to tighten.");
+      else if(total>=20) verdict=qzT("Honnête. C'est exactement pour ça que ce guide existe.","Honest. That's exactly what this guide is for.");
+      else verdict=qzT("Merci d'avoir été franc — la marge est énorme, et c'est une bonne nouvelle.","Thanks for being honest — the upside is huge, and that's good news.");
+      h+="<div class='imtitle'>"+d.icon+" "+qzT("Ton résultat","Your result")+"</div>";
       h+="<div class='qzscore'>"+total+" / "+max+"</div>";
       h+="<div class='qzverdict'>"+verdict+"</div>";
-      var lows=QUIZ.map(function(q,i){ return {i:i,v:qzAnswers[i]}; })
-        .sort(function(a,b){ return a.v-b.v; })
-        .filter(function(x){ return x.v<=3; }).slice(0,3);
-      lows.forEach(function(x){ var q=QUIZ[x.i];
-        h+="<div class='qzadv'><b>"+x.v+"/5 · "+qzT(q.fr,q.en)+"</b><br>"+qzT(q.cfr,q.cen)+"</div>"; });
-      if(!lows.length) h+="<div class='qzadv'>"+qzT("Aucun point faible marqué. Sérieusement, chapeau.","No weak spot flagged. Seriously, hats off.")+"</div>";
-      h+="<div class='qzbtns'><button class='bigbtn' id='qz-rules' type='button'>"+qzT("Relire les règles","Reread the rules")+"</button><button class='bigbtn primary' id='qz-close' type='button'>"+qzT("Fermer","Close")+"</button></div>";
+      h+="<div class='qzhuman'>"+qzT("Personne ne coche tout — même en sachant. Tape une ligne pour comprendre pourquoi ça compte.","Nobody ticks everything — even knowing better. Tap a line to see why it matters.")+"</div>";
+      d.q.forEach(function(q,i){
+        var v=qzState.answers[i];
+        var cls=v<=2?"bad":(v===3?"mid":"good");
+        h+="<details class='qzrow'"+(v<=2?" open":"")+"><summary><span class='nm'>"+qzT(q.sfr,q.sen)+"</span><b class='qn "+cls+"'>"+v+"/5</b></summary><p>"+qzT(q.wfr,q.wen)+"</p></details>";
+      });
+      if(qzState.id==="gym"){
+        var weak=[0,1,2,3,4].filter(function(i){ return qzState.answers[i]<=3; });
+        if(weak.length){
+          h+="<label class='qzrem'><input type='checkbox' id='qz-rem'"+(rmRec().on?" checked":"")+"> "+qzT("Me le rappeler pendant mes séances (petit message quand je coche un exo)","Remind me during my workouts (small message when I tick an exercise)")+"</label>";
+        }
+      }
+      h+="<div class='qzbtns'>"+(qzState.id==="gym"?"<button class='bigbtn' id='qz-rules' type='button'>"+qzT("Relire les règles","Reread the rules")+"</button>":"")
+        +"<button class='bigbtn primary' id='qz-close' type='button'>"+qzT("Fermer","Close")+"</button></div>";
     }
     qzbody.innerHTML=h;
     var st=document.getElementById("qz-start");
-    if(st) st.addEventListener("click",function(){ qzStep=0; renderQuiz(); });
+    if(st) st.addEventListener("click",function(){ qzState.step=0; qzRender(); });
     var lt=document.getElementById("qz-later");
-    if(lt) lt.addEventListener("click",function(){ closeQuiz(true); });
+    if(lt) lt.addEventListener("click",function(){ qzClose(true); });
     var rg=document.getElementById("qz-range");
     if(rg) rg.addEventListener("input",function(){
-      qzAnswers[qzStep]=parseInt(rg.value,10);
-      document.getElementById("qz-vallabel").textContent=qzT(VALW_FR[qzAnswers[qzStep]],VALW_EN[qzAnswers[qzStep]]);
+      qzState.answers[qzState.step]=parseInt(rg.value,10);
+      var v=qzState.answers[qzState.step];
+      document.getElementById("qz-vallabel").textContent=qzT(VALW_FR[v],VALW_EN[v]);
     });
     var bk=document.getElementById("qz-back");
-    if(bk) bk.addEventListener("click",function(){ qzStep--; renderQuiz(); });
+    if(bk) bk.addEventListener("click",function(){ qzState.step--; qzRender(); });
     var nx=document.getElementById("qz-next");
     if(nx) nx.addEventListener("click",function(){
-      qzStep++;
-      if(qzStep===QUIZ.length){
-        var total=qzAnswers.reduce(function(a,b){ return a+b; },0);
-        qzSave({last:Date.now(),score:total});
+      qzState.step++;
+      if(qzState.step===QZDATA[qzState.id].q.length){
+        var total=qzState.answers.reduce(function(a,b){ return a+b; },0);
+        qzSave(qzState.id,{last:Date.now(),score:total,answers:qzState.answers});
       }
-      renderQuiz();
+      qzRender();
+    });
+    var rm=document.getElementById("qz-rem");
+    if(rm) rm.addEventListener("change",function(){
+      var weak=[0,1,2,3,4].filter(function(i){ return qzState.answers[i]<=3; });
+      rmSave({on:rm.checked, weak:weak.length?weak:[0,1,2,3,4]});
+      refreshRemindSeg();
     });
     var rl=document.getElementById("qz-rules");
-    if(rl) rl.addEventListener("click",function(){ closeQuiz(false); setView("rules"); });
+    if(rl) rl.addEventListener("click",function(){ qzClose(false); setView("rules"); });
     var cl=document.getElementById("qz-close");
-    if(cl) cl.addEventListener("click",function(){ closeQuiz(false); });
+    if(cl) cl.addEventListener("click",function(){ qzClose(false); renderTestsList(); });
   }
-  document.getElementById("quizbtn").addEventListener("click",function(){
-    openQuiz(qzRec().last?"redo":"first");
+  function renderTestsList(){
+    var c=document.getElementById("testslist");
+    if(!c) return;
+    c.innerHTML="";
+    QZORDER.forEach(function(id){
+      var d=QZDATA[id], rec=qzRec(id);
+      var b=document.createElement("button"); b.type="button"; b.className="testcard";
+      var sub;
+      if(rec.last){
+        var days=Math.floor((Date.now()-rec.last)/864e5);
+        var when=isFr()?(days<1?"aujourd'hui":"il y a "+days+" j"):(days<1?"today":days+" d ago");
+        sub=(rec.score!=null?rec.score+" / "+(d.q.length*5)+" · ":"")+when;
+      } else sub=isFr()?"Pas encore fait":"Not done yet";
+      b.innerHTML="<span class='ticon'>"+d.icon+"</span><span class='ttxt'><b>"+qzT(d.tfr,d.ten)+"</b><small>"+sub+"</small></span><span class='tgo'>›</span>";
+      b.addEventListener("click",function(){ qzOpen(id,"manual"); });
+      c.appendChild(b);
+    });
+  }
+  document.getElementById("testsbtn").addEventListener("click",function(){ setView("tests"); });
+  document.getElementById("teststo").addEventListener("click",function(){ setView("tests"); });
+
+  function rmRec(){ try{ return JSON.parse(localStorage.getItem(pk(RMKEY)))||{}; }catch(e){ return {}; } }
+  function rmSave(r){ try{ localStorage.setItem(pk(RMKEY),JSON.stringify(r)); }catch(e){} }
+  var RMD_FR=["⏱️ 3 minutes de repos — mets le chrono.","📏 Amplitude complète : tout en bas, tout en haut.","🎢 Retiens la descente, sur chaque rep.","⚖️ Même poids sur toutes les séries — monte passé 10 reps.","🔥 Les 2 dernières reps doivent être dures."];
+  var RMD_EN=["⏱️ 3 minutes of rest — start the timer.","📏 Full range: all the way down, all the way up.","🎢 Hold the lowering, every rep.","⚖️ Same weight on all sets — go up past 10 reps.","🔥 The last 2 reps should be hard."];
+  var rmIdx=0;
+  function maybeSessionReminder(){
+    var r=rmRec();
+    if(!r.on||!r.weak||!r.weak.length) return;
+    var i=r.weak[rmIdx%r.weak.length]; rmIdx++;
+    showToast(isFr()?RMD_FR[i]:RMD_EN[i]);
+  }
+  var toastEl=document.getElementById("toast"), toastT=null;
+  function showToast(msg){
+    toastEl.textContent=msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastT);
+    toastT=setTimeout(function(){ toastEl.classList.remove("show"); },5000);
+  }
+  function refreshRemindSeg(){ segSet("remindseg", rmRec().on?"on":"off"); }
+  document.querySelectorAll("#remindseg button").forEach(function(b){
+    b.addEventListener("click",function(){
+      var r=rmRec();
+      r.on=(b.getAttribute("data-v")==="on");
+      if(!r.weak||!r.weak.length) r.weak=[0,1,2,3,4];
+      rmSave(r); refreshRemindSeg();
+    });
   });
+  refreshRemindSeg();
 </script>
 
 </body>
