@@ -124,6 +124,10 @@
   .lhint{ color:var(--sub); font-size:12.5px; text-align:center; margin-top:14px; }
   .loginlangrow{ display:flex; justify-content:center; margin-bottom:16px; }
   .lform{ margin-bottom:4px; }
+  #logsuggest{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+  #logsuggest button{ padding:13px; border-radius:12px; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font:700 15.5px/1.2 inherit; cursor:pointer; text-align:left; }
+  #logsuggest button:active{ border-color:var(--accent); }
 
   #actcard{ background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden; }
   .acthead{ padding:11px 14px; cursor:pointer; font-size:14px; color:var(--sub); -webkit-user-select:none; user-select:none; }
@@ -531,6 +535,7 @@
   <div class="loginlangrow"><div class="seg" id="loginlangseg"><button data-v="en" type="button">EN</button><button data-v="fr" type="button">FR</button></div></div>
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
   <div class="lform"><input id="loginname" maxlength="14" autocomplete="off"><button id="login-add" type="button">OK</button></div>
+  <div id="logsuggest"></div>
   <div id="logconfirm" hidden>
     <p class="lhint" id="logconfirmtxt"></p>
     <div class="qzbtns"><button class="bigbtn primary" id="log-create" type="button"></button><button class="bigbtn" id="log-fix" type="button"></button></div>
@@ -674,6 +679,7 @@
     persistLogin=document.getElementById("keeplogged").checked;
     setProfile(p);
     document.getElementById("loginname").value="";
+    document.getElementById("logsuggest").innerHTML="";
     document.getElementById("logconfirm").hidden=true;
     loginscr.classList.remove("show");
     setView("prog");
@@ -708,6 +714,15 @@
   });
   document.getElementById("loginname").addEventListener("input",function(){
     document.getElementById("logconfirm").hidden=true;
+    var q=document.getElementById("loginname").value.trim().toLowerCase();
+    var box=document.getElementById("logsuggest");
+    box.innerHTML="";
+    if(!q) return;
+    allProfiles().filter(function(p){ return p.toLowerCase().indexOf(q)===0; }).slice(0,4).forEach(function(p){
+      var b=document.createElement("button"); b.type="button"; b.textContent="👤 "+p;
+      b.addEventListener("click",function(){ doLogin(p); });
+      box.appendChild(b);
+    });
   });
   document.getElementById("loginname").addEventListener("keydown",function(ev){
     if(ev.key==="Enter") document.getElementById("login-add").click();
