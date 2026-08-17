@@ -127,6 +127,19 @@
     color:var(--ink); font:800 20px/1 inherit; cursor:pointer; }
   .lhint{ color:var(--sub); font-size:12.5px; text-align:center; margin-top:14px; }
   .loginlangrow{ display:flex; justify-content:center; margin-bottom:16px; }
+
+  #actcard{ background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:14px; overflow:hidden; }
+  .acthead{ padding:11px 14px; cursor:pointer; font-size:14px; color:var(--sub); -webkit-user-select:none; user-select:none; }
+  .acthead b{ color:var(--ink); }
+  .acthead::after{ content:" ▾"; color:var(--sub); }
+  #actcard.open .acthead::after{ content:" ▴"; }
+  .acthead:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+  #actgrid{ overflow-x:auto; border-top:1px solid var(--line); padding:10px 14px 12px; }
+  #actgrid table{ border-collapse:collapse; font-size:12px; }
+  #actgrid th, #actgrid td{ padding:3px 5px; text-align:center; color:var(--sub); font-weight:600; font-variant-numeric:tabular-nums; }
+  #actgrid th.today{ color:var(--accent); }
+  #actgrid td.on{ color:var(--done); font-weight:800; }
+  #actgrid .nm{ text-align:left; color:var(--ink); white-space:nowrap; padding-right:10px; }
   #userchip .plabel{ color:var(--ink); padding-right:10px; }
   #loginmodes{ display:flex; gap:8px; margin-bottom:14px; }
   #loginmodes button{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card);
@@ -309,6 +322,10 @@
 
   <section class="sec-prog">
     <h2><span class="en">The program</span><span class="fr">Le programme</span></h2>
+    <div id="actcard" hidden>
+      <div class="acthead" id="acttoday" role="button" tabindex="0"></div>
+      <div id="actgrid" hidden></div>
+    </div>
     <p class="legend"><span class="en">3 days on · 1 day off · repeat.</span><span class="fr">3 jours on · 1 jour off · on recommence.</span> <span class="sq"></span> <span class="en">= main lifts. No outline = isolation.</span><span class="fr">= gros exos. Sans contour = isolation.</span></p>
     <div class="modes">
       <button class="mode" id="mode-starter"><b>Starter</b><small><span class="en">first month · ~1 hour</span><span class="fr">premier mois · ~1h</span></small></button>
@@ -572,7 +589,7 @@
   function setLang(l){
     body.classList.toggle("fr-mode", l==="fr");
     segSet("langseg",l); segSet("loginlangseg",l);
-    refreshSets(); refreshCounts(); refreshWeights(); refreshProfActions(); refreshAdmin();
+    refreshSets(); refreshCounts(); refreshWeights(); refreshProfActions(); refreshAdmin(); refreshActivity();
     try{ localStorage.setItem(LANGKEY,l); }catch(e){}
   }
   function setUnit(u){
@@ -793,7 +810,7 @@
       var winput=col.querySelector("input");
       function storeDisplay(v){
         if(isNaN(v)||v<0){ delete weights[k]; }
-        else { weights[k]=(unit==="lbs")?v/2.20462:v; }
+        else { weights[k]=(unit==="lbs")?v/2.20462:v; pingActivity(); }
         saveWeights();
         winput.classList.remove("savedok"); void winput.offsetWidth; winput.classList.add("savedok");
         setTimeout(function(){ winput.classList.remove("savedok"); },700);
@@ -814,6 +831,7 @@
         state[k]=exo.classList.contains("done");
         saveState();
         refreshCounts();
+        if(exo.classList.contains("done")) pingActivity();
         if(exo.classList.contains("done")){
           var bx=exo.querySelector(".box");
           bx.classList.remove("pop"); void bx.offsetWidth; bx.classList.add("pop");
@@ -958,6 +976,70 @@
     synchint.hidden=true;
     flashBtn(importBtn,importHTML,isFr()?"✓ Importé":"✓ Imported");
   });
+
+  var ACT_URL="";
+  var ACTPINGKEY="romain-gym-lastping";
+  var actMap=null;
+  var actcard=document.getElementById("actcard");
+  var acttoday=document.getElementById("acttoday");
+  var actgrid=document.getElementById("actgrid");
+  function localDay(offset){
+    var d=new Date(); d.setDate(d.getDate()-(offset||0));
+    function p(n){ return (n<10?"0":"")+n; }
+    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+  }
+  function pingActivity(){
+    if(!ACT_URL||!profile) return;
+    var tag=profile+"|"+localDay(0), prev=null;
+    try{ prev=localStorage.getItem(ACTPINGKEY); }catch(e){}
+    if(prev===tag) return;
+    if(navigator.onLine===false) return;
+    try{ localStorage.setItem(ACTPINGKEY,tag); }catch(e){}
+    try{
+      fetch(ACT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({p:profile})}).catch(function(){});
+    }catch(e){}
+    setTimeout(loadActivity,2500);
+  }
+  function loadActivity(){
+    if(!ACT_URL) return;
+    fetch(ACT_URL+"?t="+Date.now()).then(function(r){ return r.json(); }).then(function(map){
+      actMap=map; refreshActivity();
+    }).catch(function(){});
+  }
+  function refreshActivity(){
+    if(!actMap){ return; }
+    var days=[]; for(var i=14;i>=0;i--) days.push(localDay(i));
+    var today=localDay(0);
+    var counts={};
+    days.forEach(function(d){ (actMap[d]||[]).forEach(function(n){ counts[n]=(counts[n]||0)+1; }); });
+    var names=Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a] || a.localeCompare(b); });
+    var todayNames=actMap[today]||[];
+    var lbl=isFr()?"Aujourd'hui :":"Today:";
+    var none=isFr()?"personne encore…":"nobody yet…";
+    acttoday.innerHTML="🔥 <b>"+lbl+"</b> "+(todayNames.length?todayNames.map(function(n){ return n+" ✓"; }).join(" · "):none);
+    var h="<table><tr><th class='nm'></th>";
+    days.forEach(function(d){ h+="<th"+(d===today?" class='today'":"")+">"+parseInt(d.slice(8),10)+"</th>"; });
+    h+="</tr>";
+    if(!names.length){
+      h+="<tr><td class='nm'>"+(isFr()?"Encore personne sur 15 jours":"Nobody in the last 15 days")+"</td></tr>";
+    } else {
+      names.forEach(function(n){
+        h+="<tr><td class='nm'>"+n.replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</td>";
+        days.forEach(function(d){ var on=(actMap[d]||[]).indexOf(n)!==-1; h+="<td"+(on?" class='on'":"")+">"+(on?"✓":"·")+"</td>"; });
+        h+="</tr>";
+      });
+    }
+    h+="</table>";
+    actgrid.innerHTML=h;
+    actcard.hidden=false;
+  }
+  function toggleActGrid(){
+    actgrid.hidden=!actgrid.hidden;
+    actcard.classList.toggle("open",!actgrid.hidden);
+  }
+  acttoday.addEventListener("click",toggleActGrid);
+  acttoday.addEventListener("keydown",function(ev){ if(ev.key===" "||ev.key==="Enter"){ ev.preventDefault(); toggleActGrid(); } });
+  loadActivity();
 </script>
 
 </body>
