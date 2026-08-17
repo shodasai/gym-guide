@@ -33,7 +33,8 @@
   *{box-sizing:border-box}
   body{ margin:0; background:var(--bg); color:var(--ink);
     font:16px/1.5 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased; }
+    -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent; }
+  .exo, .dayhead{ -webkit-user-select:none; user-select:none; }
   .wrap{ max-width:560px; margin:0 auto; padding:20px 16px 64px; }
 
   .fr-mode .en{ display:none !important; }
@@ -210,7 +211,7 @@
   .musc{ display:block; font-size:12px; font-weight:600; color:var(--sub); margin-top:1px; }
   .sets{ flex:0 0 auto; font-variant-numeric:tabular-nums; font-size:12.5px; font-weight:700;
     background:var(--accent); color:var(--accent-ink); border-radius:99px; padding:2px 9px; align-self:flex-start; }
-  .exo .how{ color:var(--sub); font-size:13.5px; margin-top:4px; }
+  .exo .how{ display:block; color:var(--sub); font-size:13.5px; margin-top:4px; }
   .watch{ display:inline-block; margin-top:8px; margin-right:6px; font-size:13px; font-weight:700; color:var(--link);
     text-decoration:none; border:1.5px solid var(--link); border-radius:8px; padding:6px 12px; }
   .watch:hover{ background:var(--link); color:var(--bg); }
