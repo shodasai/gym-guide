@@ -96,12 +96,12 @@
   .box.pop{ animation:pop .35s ease; }
   @media (prefers-reduced-motion: reduce){ .box.pop{ animation:none; } }
 
-  #profactions{ display:none; justify-content:flex-end; gap:8px; margin:-6px 0 10px; }
+  #profactions{ display:none; gap:8px; margin-top:14px; }
   #profactions.show{ display:flex; }
   #profactions button{ background:var(--card); border:1px solid var(--line); border-radius:8px; color:var(--sub);
     font:600 12px/1 inherit; padding:7px 10px; cursor:pointer; }
   #profactions button:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
-  #profform{ display:none; justify-content:flex-end; gap:8px; margin:-6px 0 10px; }
+  #profform{ display:none; gap:8px; margin-top:10px; }
   #profform.show{ display:flex; }
   #profform input{ width:150px; padding:7px 10px; border:1px solid var(--line); border-radius:8px;
     background:var(--card); color:var(--ink); font:600 13px/1.2 inherit; }
@@ -109,7 +109,7 @@
     font:700 12px/1 inherit; padding:7px 12px; cursor:pointer; }
   #profform input:focus-visible, #profform button:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
 
-  #loginscr{ position:fixed; inset:0; background:var(--bg); z-index:50; display:none;
+  #loginscr{ position:fixed; inset:0; background:var(--bg); z-index:70; display:none;
     align-items:center; justify-content:center; padding:24px; }
   #loginscr.show{ display:flex; }
   .loginbox{ width:100%; max-width:340px; }
@@ -135,21 +135,47 @@
     background:var(--card); color:var(--ink); font:600 15px/1.2 inherit; margin-bottom:10px; }
   .keepbox{ display:flex; align-items:center; gap:8px; margin-top:12px; color:var(--sub); font-size:13.5px; cursor:pointer; }
   .keepbox input{ width:18px; height:18px; accent-color:var(--accent); }
-  #adminrow{ display:none; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin:-6px 0 10px; align-items:center; }
+  #adminrow{ display:none; flex-wrap:wrap; gap:8px; margin-top:14px; align-items:center; }
   #adminrow.show{ display:flex; }
   #adminrow .alabel{ color:var(--sub); font-size:12px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
   #adminrow button{ background:var(--card); border:1px solid var(--line); border-radius:8px; color:var(--sub);
     font:600 12px/1 inherit; padding:7px 10px; cursor:pointer; }
   .wcol input.savedok{ border-color:var(--done); }
 
-  #tabbar{ position:sticky; top:0; z-index:10; display:flex; gap:8px; padding:10px 0;
-    background:var(--bg); margin-top:14px; }
-  #tabbar button{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card);
-    color:var(--sub); font:700 15px/1.2 inherit; cursor:pointer; }
-  #tabbar button.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
-  #tabbar button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-  body[data-tab="prog"] .sec-rules{ display:none; }
-  body[data-tab="rules"] .sec-prog{ display:none; }
+  .appbar{ position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:10px;
+    padding:10px 0 8px; background:var(--bg); }
+  #menubtn{ width:44px; height:40px; border-radius:10px; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font:700 18px/1 inherit; cursor:pointer; }
+  .apptitle{ font-size:19px; font-weight:800; flex:1; }
+  #userbtn{ display:flex; align-items:center; gap:6px; padding:10px 13px; border-radius:99px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink); font:700 13px/1 inherit; cursor:pointer; }
+  #menubtn:focus-visible, #userbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  #drawer{ position:fixed; top:0; left:0; bottom:0; width:250px; background:var(--card); z-index:60;
+    transform:translateX(-105%); transition:transform .22s ease; padding:18px 12px;
+    border-right:1px solid var(--line); }
+  #drawer.open{ transform:none; }
+  #drawer .dtitle{ font-weight:800; font-size:17px; margin:4px 8px 14px; }
+  #drawer nav{ display:flex; flex-direction:column; gap:6px; }
+  #drawer nav button{ text-align:left; padding:13px 12px; border-radius:10px; border:0; background:none;
+    color:var(--ink); font:600 15px/1.2 inherit; cursor:pointer; }
+  #drawer nav button.active{ background:var(--card2); color:var(--accent); }
+  #scrim{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:55; display:none; }
+  #scrim.open{ display:block; }
+  @media (prefers-reduced-motion: reduce){ #drawer{ transition:none; } }
+
+  .sec-prog, .sec-rules, .sec-account, .sec-settings{ display:none; }
+  body[data-view="prog"] .sec-prog{ display:block; }
+  body[data-view="rules"] .sec-rules{ display:block; }
+  body[data-view="account"] .sec-account{ display:block; }
+  body[data-view="settings"] .sec-settings{ display:block; }
+
+  .setrow{ display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-top:10px; }
+  .setlabel{ font-weight:700; }
+  .bigbtn{ display:block; width:100%; margin-top:14px; padding:13px; border-radius:12px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink); font:700 15px/1.2 inherit; cursor:pointer; }
+  .bigbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
   .mhead{ padding:10px 14px 4px; font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
     border-top:1px solid var(--line); }
@@ -220,26 +246,15 @@
 
 <div class="wrap">
   <header>
-    <div class="topbtns">
-      <div class="seg" id="userchip"><span class="plabel">👤 <b id="username"></b></span><button id="logoutbtn" type="button"></button></div>
-      <div class="seg" id="langseg"><button data-v="en">EN</button><button data-v="fr">FR</button></div>
-      <div class="seg" id="unitseg"><button data-v="kg">kg</button><button data-v="lbs">lbs</button></div>
+    <div class="appbar">
+      <button id="menubtn" type="button" aria-label="Menu">☰</button>
+      <div class="apptitle">Gym Guide</div>
+      <button id="userbtn" type="button">👤 <b id="username"></b></button>
     </div>
-    <div id="profactions"><button id="prof-rename" type="button"></button></div>
-    <div id="adminrow"><span class="alabel"></span></div>
-    <div id="profform"><input id="profname" maxlength="14" autocomplete="off"><button id="prof-ok" type="button">OK</button><button id="prof-cancel" type="button">✕</button></div>
-    <div class="kicker"><span class="en">3 days on · 1 day off · repeat</span><span class="fr">3 jours on · 1 jour off · on recommence</span></div>
-    <h1>Romain's Gym Guide</h1>
-    <p class="byline"><span class="en">I made this for you. Tap an exercise to tick it off, use +/− to track your weights (saved per profile). — Max</span><span class="fr">Je t'ai fait ça. Tape un exo pour le cocher, utilise +/− pour suivre tes poids (sauvegardés par profil). — Max</span></p>
-    <p class="legend"><span class="sq"></span> <span class="en">= main lifts (the base). No outline = finishing / isolation work.</span><span class="fr">= gros exos (la base). Sans contour = finition / isolation.</span></p>
   </header>
 
-  <div id="tabbar">
-    <button data-t="prog" type="button"><span class="en">Program</span><span class="fr">Programme</span></button>
-    <button data-t="rules" type="button"><span class="en">Rules &amp; tips</span><span class="fr">Règles &amp; conseils</span></button>
-  </div>
-
   <section class="sec-rules">
+    <p class="byline"><span class="en">I made this for you. Tap an exercise to tick it off, use +/− to track your weights. — Max</span><span class="fr">Je t'ai fait ça. Tape un exo pour le cocher, utilise +/− pour suivre tes poids. — Max</span></p>
     <h2><span class="en">The only 3 rules</span><span class="fr">Les 3 seules règles</span></h2>
     <div class="rules">
       <div class="rule"><span class="rtitle"><span class="en">1 · Hard but clean</span><span class="fr">1 · Dur mais propre</span></span>
@@ -264,6 +279,7 @@
 
   <section class="sec-prog">
     <h2><span class="en">The program</span><span class="fr">Le programme</span></h2>
+    <p class="legend"><span class="en">3 days on · 1 day off · repeat.</span><span class="fr">3 jours on · 1 jour off · on recommence.</span> <span class="sq"></span> <span class="en">= main lifts. No outline = isolation.</span><span class="fr">= gros exos. Sans contour = isolation.</span></p>
     <div class="modes">
       <button class="mode" id="mode-starter"><b>Starter</b><small><span class="en">first month · ~1 hour</span><span class="fr">premier mois · ~1h</span></small></button>
       <button class="mode" id="mode-full"><b><span class="en">Full program</span><span class="fr">Programme complet</span></b><small><span class="en">my version</span><span class="fr">ma version</span></small></button>
@@ -350,8 +366,41 @@
     </div>
   </section>
 
+  <section class="sec-account">
+    <h2><span class="en">Account</span><span class="fr">Compte</span></h2>
+    <div class="why">
+      <p>👤 <span class="en">Logged in as</span><span class="fr">Connecté en tant que</span> <b id="accname"></b></p>
+    </div>
+    <div id="profactions"><button id="prof-rename" type="button"></button></div>
+    <div id="profform"><input id="profname" maxlength="14" autocomplete="off"><button id="prof-ok" type="button">OK</button><button id="prof-cancel" type="button">✕</button></div>
+    <div id="adminrow"><span class="alabel"></span></div>
+    <button id="logoutbtn" type="button" class="bigbtn"></button>
+    <p class="lhint"><span class="en">Weights and ticks save automatically on this device, per profile.</span><span class="fr">Poids et coches se sauvegardent automatiquement sur cet appareil, par profil.</span></p>
+  </section>
+
+  <section class="sec-settings">
+    <h2><span class="en">Settings</span><span class="fr">Paramètres</span></h2>
+    <div class="setrow"><span class="setlabel"><span class="en">Theme</span><span class="fr">Thème</span></span>
+      <div class="seg" id="themeseg"><button data-v="auto" type="button">Auto</button><button data-v="dark" type="button"><span class="en">Dark</span><span class="fr">Sombre</span></button><button data-v="light" type="button"><span class="en">Light</span><span class="fr">Clair</span></button></div></div>
+    <div class="setrow"><span class="setlabel"><span class="en">Language</span><span class="fr">Langue</span></span>
+      <div class="seg" id="langseg"><button data-v="en" type="button">EN</button><button data-v="fr" type="button">FR</button></div></div>
+    <div class="setrow"><span class="setlabel"><span class="en">Units</span><span class="fr">Unités</span></span>
+      <div class="seg" id="unitseg"><button data-v="kg" type="button">kg</button><button data-v="lbs" type="button">lbs</button></div></div>
+  </section>
+
   <footer><span class="en">Questions → text me.</span><span class="fr">Des questions → écris-moi.</span></footer>
 </div>
+
+<div id="drawer">
+  <div class="dtitle">Gym Guide</div>
+  <nav>
+    <button data-view="prog" type="button">📋 <span class="en">Program</span><span class="fr">Programme</span></button>
+    <button data-view="rules" type="button">📖 <span class="en">Rules &amp; tips</span><span class="fr">Règles &amp; conseils</span></button>
+    <button data-view="account" type="button">👤 <span class="en">Account</span><span class="fr">Compte</span></button>
+    <button data-view="settings" type="button">⚙️ <span class="en">Settings</span><span class="fr">Paramètres</span></button>
+  </nav>
+</div>
+<div id="scrim"></div>
 
 <div id="loginscr"><div class="loginbox">
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
@@ -481,6 +530,7 @@
     profile=p;
     storeLogin(p);
     document.getElementById("username").textContent=p||"";
+    document.getElementById("accname").textContent=p||"";
     loadProfileData();
     refreshTicks(); refreshWeights(); refreshProfActions(); refreshAdmin();
   }
@@ -514,6 +564,7 @@
     document.getElementById("loginsearch").value="";
     document.getElementById("loginlist").innerHTML="";
     loginscr.classList.remove("show");
+    setView("prog");
   }
   function showLogin(){ setLoginMode("connect"); loginscr.classList.add("show"); }
   document.getElementById("login-add").addEventListener("click",function(){
@@ -613,16 +664,34 @@
   document.querySelectorAll("#unitseg button").forEach(function(b){
     b.addEventListener("click",function(){ setUnit(b.getAttribute("data-v")); });
   });
-  var TABKEY="romain-gym-tab";
-  function setTab(t){
-    body.setAttribute("data-tab",t);
-    document.querySelectorAll("#tabbar button").forEach(function(b){
-      b.classList.toggle("active", b.getAttribute("data-t")===t);
+  var drawer=document.getElementById("drawer"), scrim=document.getElementById("scrim");
+  function closeDrawer(){ drawer.classList.remove("open"); scrim.classList.remove("open"); }
+  document.getElementById("menubtn").addEventListener("click",function(){
+    drawer.classList.toggle("open"); scrim.classList.toggle("open");
+  });
+  scrim.addEventListener("click",closeDrawer);
+  function setView(v){
+    body.setAttribute("data-view",v);
+    document.querySelectorAll("#drawer nav button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-view")===v);
     });
-    try{ localStorage.setItem(TABKEY,t); }catch(e){}
+    closeDrawer();
+    window.scrollTo(0,0);
   }
-  document.querySelectorAll("#tabbar button").forEach(function(b){
-    b.addEventListener("click",function(){ setTab(b.getAttribute("data-t")); });
+  document.querySelectorAll("#drawer nav button").forEach(function(b){
+    b.addEventListener("click",function(){ setView(b.getAttribute("data-view")); });
+  });
+  document.getElementById("userbtn").addEventListener("click",function(){ setView("account"); });
+
+  var THKEY="romain-gym-theme";
+  function setTheme(t){
+    if(t==="auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme",t);
+    segSet("themeseg",t);
+    try{ localStorage.setItem(THKEY,t); }catch(e){}
+  }
+  document.querySelectorAll("#themeseg button").forEach(function(b){
+    b.addEventListener("click",function(){ setTheme(b.getAttribute("data-v")); });
   });
 
   document.querySelectorAll(".day").forEach(function(day){
@@ -696,9 +765,10 @@
   loadProfileData();
   setLang(savedLang==="fr"?"fr":"en");
   setMode(savedMode==="full"?"full":"starter");
-  var savedTab="prog";
-  try{ savedTab=localStorage.getItem(TABKEY)||"prog"; }catch(e){}
-  setTab(savedTab==="rules"?"rules":"prog");
+  var savedTheme="auto";
+  try{ savedTheme=localStorage.getItem(THKEY)||"auto"; }catch(e){}
+  setTheme(savedTheme==="dark"||savedTheme==="light"?savedTheme:"auto");
+  setView("prog");
   if(profile){ setProfile(profile); } else { showLogin(); }
 </script>
 
