@@ -253,6 +253,24 @@
   .legend .sq{ display:inline-block; width:11px; height:11px; border:1.5px solid var(--silver); border-radius:4px; vertical-align:-1px; }
 
   footer{ margin-top:30px; color:var(--sub); font-size:13.5px; text-align:center; }
+
+  #syncbox{ display:none; margin-top:10px; }
+  #syncbox.show{ display:block; }
+  #synccode{ width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:12px;
+    background:var(--card); color:var(--ink); font:600 13px/1.5 ui-monospace,Menlo,Consolas,monospace;
+    resize:vertical; word-break:break-all; }
+  #synccode:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+
+  #installmodal{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:80; display:none;
+    align-items:center; justify-content:center; padding:24px; }
+  #installmodal.show{ display:flex; }
+  .imbox{ width:100%; max-width:340px; background:var(--card); border:1px solid var(--line);
+    border-radius:16px; padding:20px; }
+  .imbox .imtitle{ font-size:19px; font-weight:800; margin-bottom:12px; }
+  .imbox p{ margin:8px 0 0; color:var(--sub); font-size:14.5px; }
+  .imbox p b{ color:var(--ink); }
+  #im-ios, #im-other{ display:none; }
+  #im-ios.show, #im-other.show{ display:block; }
 </style>
 
 <div class="wrap">
@@ -386,6 +404,19 @@
     <div id="adminrow"><span class="alabel"></span></div>
     <button id="logoutbtn" type="button" class="bigbtn"></button>
     <p class="lhint"><span class="en">Weights and ticks save automatically on this device, per profile.</span><span class="fr">Poids et coches se sauvegardent automatiquement sur cet appareil, par profil.</span></p>
+
+    <h2 style="margin-top:26px"><span class="en">Transfer between devices</span><span class="fr">Transférer entre appareils</span></h2>
+    <div class="why">
+      <p class="en">Your weights and ticks live on each device separately. To move them: copy your code here, send it to yourself (WhatsApp, notes, whatever), then import it on the other device.</p>
+      <p class="fr">Tes poids et tes coches restent sur chaque appareil séparément. Pour les déplacer : copie ton code ici, envoie-le-toi (WhatsApp, notes, peu importe), puis importe-le sur l'autre appareil.</p>
+    </div>
+    <button id="exportbtn" type="button" class="bigbtn">📤 <span class="en">Copy my data (code)</span><span class="fr">Copier mes données (code)</span></button>
+    <button id="importbtn" type="button" class="bigbtn">📥 <span class="en">Import a code</span><span class="fr">Importer un code</span></button>
+    <div id="syncbox">
+      <textarea id="synccode" rows="4" spellcheck="false" autocomplete="off"></textarea>
+      <button id="syncok" type="button" class="bigbtn">OK</button>
+    </div>
+    <p class="lhint" id="synchint" hidden><span class="en">Importing replaces the weights and ticks of the profile you're logged in as, on this device.</span><span class="fr">L'import remplace les poids et coches du profil connecté, sur cet appareil.</span></p>
   </section>
 
   <section class="sec-settings">
@@ -408,9 +439,31 @@
     <button data-view="rules" type="button">📖 <span class="en">Rules &amp; tips</span><span class="fr">Règles &amp; conseils</span></button>
     <button data-view="account" type="button">👤 <span class="en">Account</span><span class="fr">Compte</span></button>
     <button data-view="settings" type="button">⚙️ <span class="en">Settings</span><span class="fr">Paramètres</span></button>
+    <button id="installbtn" type="button" hidden>📲 <span class="en">Install the app</span><span class="fr">Installer l'app</span></button>
   </nav>
 </div>
 <div id="scrim"></div>
+
+<div id="installmodal"><div class="imbox">
+  <div class="imtitle">📲 <span class="en">Install the app</span><span class="fr">Installer l'app</span></div>
+  <div id="im-ios">
+    <p class="en">On iPhone it's done by hand, in <b>Safari</b>:</p>
+    <p class="fr">Sur iPhone ça se fait à la main, dans <b>Safari</b> :</p>
+    <p class="en"><b>1.</b> Tap the <b>Share</b> button (the square with the arrow, bottom of the screen).</p>
+    <p class="fr"><b>1.</b> Tape le bouton <b>Partager</b> (le carré avec la flèche, en bas de l'écran).</p>
+    <p class="en"><b>2.</b> Scroll down and tap <b>"Add to Home Screen"</b>.</p>
+    <p class="fr"><b>2.</b> Descends et tape <b>« Sur l'écran d'accueil »</b>.</p>
+    <p class="en"><b>3.</b> Confirm. The app appears with your other apps.</p>
+    <p class="fr"><b>3.</b> Confirme. L'app apparaît avec tes autres applis.</p>
+  </div>
+  <div id="im-other">
+    <p class="en">In Chrome: tap the <b>⋮ menu</b> (top right), then <b>"Add to Home screen"</b> or <b>"Install app"</b>.</p>
+    <p class="fr">Dans Chrome : tape le <b>menu ⋮</b> (en haut à droite), puis <b>« Ajouter à l'écran d'accueil »</b> ou <b>« Installer l'application »</b>.</p>
+    <p class="en">The app then opens full screen, with your other apps.</p>
+    <p class="fr">L'app s'ouvre ensuite en plein écran, avec tes autres applis.</p>
+  </div>
+  <button class="bigbtn" id="im-close" type="button">OK</button>
+</div></div>
 
 <div id="loginscr"><div class="loginbox">
   <div class="ltitle"><span class="en">Who's training?</span><span class="fr">Qui s'entraîne ?</span></div>
@@ -700,13 +753,13 @@
   scrim.addEventListener("click",closeDrawer);
   function setView(v){
     body.setAttribute("data-view",v);
-    document.querySelectorAll("#drawer nav button").forEach(function(b){
+    document.querySelectorAll("#drawer nav button[data-view]").forEach(function(b){
       b.classList.toggle("active", b.getAttribute("data-view")===v);
     });
     closeDrawer();
     window.scrollTo(0,0);
   }
-  document.querySelectorAll("#drawer nav button").forEach(function(b){
+  document.querySelectorAll("#drawer nav button[data-view]").forEach(function(b){
     b.addEventListener("click",function(){ setView(b.getAttribute("data-view")); });
   });
   document.getElementById("userbtn").addEventListener("click",function(){ setView("account"); });
@@ -808,6 +861,98 @@
   setTheme(savedTheme==="dark"||savedTheme==="light"?savedTheme:"auto");
   setView("prog");
   if(profile){ setProfile(profile); } else { showLogin(); }
+
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  }
+
+  var deferredInstall=null;
+  var installBtn=document.getElementById("installbtn");
+  var installModal=document.getElementById("installmodal");
+  var isStandalone=window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone===true;
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  if(!isStandalone) installBtn.hidden=false;
+  window.addEventListener("beforeinstallprompt",function(ev){
+    ev.preventDefault();
+    deferredInstall=ev;
+    if(!isStandalone) installBtn.hidden=false;
+  });
+  window.addEventListener("appinstalled",function(){ deferredInstall=null; installBtn.hidden=true; });
+  installBtn.addEventListener("click",function(){
+    closeDrawer();
+    if(deferredInstall){
+      var p=deferredInstall; deferredInstall=null;
+      p.prompt();
+      p.userChoice.then(function(choice){
+        if(choice && choice.outcome==="accepted") installBtn.hidden=true;
+        else deferredInstall=p;
+      });
+    } else {
+      document.getElementById("im-ios").classList.toggle("show",isIOS);
+      document.getElementById("im-other").classList.toggle("show",!isIOS);
+      installModal.classList.add("show");
+    }
+  });
+  document.getElementById("im-close").addEventListener("click",function(){ installModal.classList.remove("show"); });
+  installModal.addEventListener("click",function(ev){ if(ev.target===installModal) installModal.classList.remove("show"); });
+
+  var syncbox=document.getElementById("syncbox");
+  var synccode=document.getElementById("synccode");
+  var syncok=document.getElementById("syncok");
+  var synchint=document.getElementById("synchint");
+  var exportBtn=document.getElementById("exportbtn");
+  var importBtn=document.getElementById("importbtn");
+  var exportHTML=exportBtn.innerHTML, importHTML=importBtn.innerHTML;
+  function flashBtn(btn,orig,txt){
+    btn.innerHTML=txt;
+    setTimeout(function(){ btn.innerHTML=orig; },1600);
+  }
+  function makeCode(){
+    var json=JSON.stringify({v:1,p:profile,w:weights,s:state});
+    return "GYM1."+btoa(unescape(encodeURIComponent(json)));
+  }
+  exportBtn.addEventListener("click",function(){
+    var code=makeCode();
+    syncbox.classList.add("show");
+    syncok.style.display="none";
+    synchint.hidden=true;
+    synccode.readOnly=true;
+    synccode.value=code;
+    synccode.focus(); synccode.select();
+    var copied=isFr()?"✓ Copié, envoie-le-toi":"✓ Copied, send it to yourself";
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(function(){ flashBtn(exportBtn,exportHTML,copied); },function(){});
+    } else {
+      try{ if(document.execCommand("copy")) flashBtn(exportBtn,exportHTML,copied); }catch(e){}
+    }
+  });
+  importBtn.addEventListener("click",function(){
+    syncbox.classList.add("show");
+    syncok.style.display="";
+    synchint.hidden=false;
+    synccode.readOnly=false;
+    synccode.value="";
+    synccode.placeholder=isFr()?"Colle ton code ici…":"Paste your code here…";
+    synccode.focus();
+  });
+  syncok.addEventListener("click",function(){
+    var raw=synccode.value.replace(/\s+/g,"");
+    if(raw.indexOf("GYM1.")===0) raw=raw.slice(5);
+    var obj=null;
+    try{ obj=JSON.parse(decodeURIComponent(escape(atob(raw)))); }catch(e){}
+    if(!obj || typeof obj!=="object" || (!obj.w && !obj.s)){
+      flashBtn(syncok,"OK",isFr()?"Code invalide":"Invalid code");
+      return;
+    }
+    weights=(obj.w && typeof obj.w==="object")?obj.w:{};
+    state=(obj.s && typeof obj.s==="object")?obj.s:{};
+    saveWeights(); saveState();
+    refreshTicks(); refreshWeights();
+    synccode.value="";
+    syncbox.classList.remove("show");
+    synchint.hidden=true;
+    flashBtn(importBtn,importHTML,isFr()?"✓ Importé":"✓ Imported");
+  });
 </script>
 
 </body>
