@@ -285,6 +285,25 @@
   .imbox p b{ color:var(--ink); }
   #im-ios, #im-other{ display:none; }
   #im-ios.show, #im-other.show{ display:block; }
+
+  #quizmodal{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:85; display:none;
+    align-items:center; justify-content:center; padding:24px; }
+  #quizmodal.show{ display:flex; }
+  .qzbox{ max-width:360px; max-height:86vh; overflow-y:auto; }
+  .qzbox p{ margin:8px 0 14px; color:var(--sub); font-size:14.5px; }
+  .qzstep{ font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--sub); margin-bottom:8px; }
+  .qzq{ font-size:16.5px; font-weight:700; line-height:1.4; margin-bottom:16px; }
+  .qzslider{ width:100%; accent-color:var(--accent); height:36px; cursor:pointer; }
+  .qzval{ text-align:center; font-size:16px; font-weight:800; color:var(--accent); margin:2px 0 4px; }
+  .qzscale{ display:flex; justify-content:space-between; color:var(--sub); font-size:11.5px; margin-bottom:12px; }
+  .qzbtns{ display:flex; gap:8px; margin-top:8px; }
+  .qzbtns .bigbtn{ margin-top:0; flex:1; }
+  .qzbtns .bigbtn.qback{ flex:0 0 64px; }
+  .bigbtn.primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .qzscore{ font-size:36px; font-weight:800; text-align:center; margin:4px 0; }
+  .qzverdict{ text-align:center; color:var(--sub); font-size:14.5px; margin-bottom:10px; }
+  .qzadv{ background:var(--card2); border-radius:10px; padding:10px 12px; margin-top:8px; font-size:13.5px; color:var(--sub); }
+  .qzadv b{ color:var(--ink); font-size:13px; }
 </style>
 
 <div class="wrap">
@@ -318,6 +337,7 @@
     <details class="note tip"><summary><b><span class="en">I checked every video myself. Watch them for real.</span><span class="fr">J'ai vérifié chaque vidéo moi-même. Regarde-les vraiment.</span></b></summary>
       <p class="en">Tap ▶ under each exercise. The long ones are long because they're packed with details. 2 minutes of watching saves weeks of doing it wrong.</p>
       <p class="fr">Tape ▶ sous chaque exo. Les longues sont longues parce qu'elles sont pleines de détails. 2 minutes de vidéo t'évitent des semaines à mal faire.</p></details>
+    <button id="quizbtn" type="button" class="bigbtn">📝 <span class="en">Test: where are you at, honestly?</span><span class="fr">Test : où t'en es, honnêtement ?</span></button>
   </section>
 
   <section class="sec-prog">
@@ -461,6 +481,8 @@
   </nav>
 </div>
 <div id="scrim"></div>
+
+<div id="quizmodal"><div class="imbox qzbox"><div id="qzbody"></div></div></div>
 
 <div id="installmodal"><div class="imbox">
   <div class="imtitle">📲 <span class="en">Install the app</span><span class="fr">Installer l'app</span></div>
@@ -635,6 +657,7 @@
     document.getElementById("accname").textContent=p||"";
     loadProfileData();
     refreshTicks(); refreshWeights(); refreshProfActions(); refreshAdmin();
+    setTimeout(function(){ try{ maybeProposeQuiz(); }catch(e){} },400);
   }
   function setLoginMode(m){
     document.getElementById("lm-connect").classList.toggle("active",m==="connect");
@@ -1040,6 +1063,132 @@
   acttoday.addEventListener("click",toggleActGrid);
   acttoday.addEventListener("keydown",function(ev){ if(ev.key===" "||ev.key==="Enter"){ ev.preventDefault(); toggleActGrid(); } });
   loadActivity();
+
+  var QZKEY="romain-gym-quiz";
+  var QUIZ=[
+    {fr:"Entre deux séries, j'attends vraiment 3 minutes — au chrono, pas au feeling.",
+     en:"Between sets I really wait 3 minutes — with a timer, not by feel.",
+     cfr:"Mets un vrai chrono. Si ta 2e série s'effondre par rapport à la première, c'est ça la raison.",
+     cen:"Use an actual timer. If your second set collapses compared to the first, that's why."},
+    {fr:"Je fais l'amplitude complète : tout en bas, tout en haut, à chaque rep.",
+     en:"I use the full range of motion: all the way down, all the way up, every rep.",
+     cfr:"Une demi-rep construit un demi-muscle. Baisse le poids s'il le faut.",
+     cen:"Half a rep builds half a muscle. Lower the weight if you must."},
+    {fr:"Je redescends le poids lentement et en contrôle, au lieu de le laisser retomber d'un coup.",
+     en:"I lower the weight slowly and under control, instead of letting it drop back.",
+     cfr:"La descente construit autant de muscle que la montée. Retiens-la, à chaque rep.",
+     cen:"The lowering half builds as much muscle as the lift. Own it, every rep."},
+    {fr:"Je garde le même poids sur toutes les séries d'un exo, et je ne monte que passé 10 reps.",
+     en:"I keep the same weight for all sets of an exercise, and only go heavier past 10 reps.",
+     cfr:"Même poids partout, un cran de plus quand tu dépasses 10 reps. C'est toute ta règle de progression.",
+     cen:"Same weight everywhere, one step up once you pass 10 reps. That's your whole progression rule."},
+    {fr:"Mes dernières reps sont vraiment dures (à 1-2 reps de ne plus pouvoir).",
+     en:"My last reps are genuinely hard (1-2 reps away from failing).",
+     cfr:"Si ce n'est jamais dur, ça ne compte pas. Approche-toi de l'échec, proprement.",
+     cen:"If it never gets hard, it doesn't count. Get close to failure, cleanly."},
+    {fr:"Je tiens le rythme de séances que je me suis fixé (ex. 3 ou 5 par semaine).",
+     en:"I stick to the training schedule I set for myself (e.g. 3 or 5 sessions a week).",
+     cfr:"La régularité bat tout le reste. Mieux valent 3 séances tenues que 5 imaginées.",
+     cen:"Consistency beats everything else. 3 sessions you actually do beat 5 you planned."},
+    {fr:"Quand je ne suis pas sûr d'un mouvement, je regarde la vidéo avant de le faire.",
+     en:"When I'm not sure about a movement, I watch the video before doing it.",
+     cfr:"2 minutes de vidéo t'évitent des semaines à mal faire. Les boutons ▶ sont là pour ça.",
+     cen:"2 minutes of video saves weeks of doing it wrong. That's what the ▶ buttons are for."},
+    {fr:"Je prends mon jour de repos complet, sans « petite séance bonus ».",
+     en:"I take my full rest day, no sneaky bonus session.",
+     cfr:"Le muscle pousse pendant le repos. Sauter le jour off te ralentit, il ne t'accélère pas.",
+     cen:"Muscle grows during rest. Skipping the off day slows you down, it doesn't speed you up."}
+  ];
+  var VALW_FR=["","1 · Jamais","2 · Rarement","3 · Parfois","4 · Souvent","5 · Toujours"];
+  var VALW_EN=["","1 · Never","2 · Rarely","3 · Sometimes","4 · Often","5 · Always"];
+  var quizmodal=document.getElementById("quizmodal");
+  var qzbody=document.getElementById("qzbody");
+  var qzAnswers=[], qzStep=-1, qzMode="first";
+  function qzT(fr,en){ return isFr()?fr:en; }
+  function qzRec(){ try{ return JSON.parse(localStorage.getItem(pk(QZKEY)))||{}; }catch(e){ return {}; } }
+  function qzSave(rec){ try{ localStorage.setItem(pk(QZKEY),JSON.stringify(rec)); }catch(e){} }
+  function openQuiz(mode){
+    qzMode=mode||"first"; qzStep=-1;
+    qzAnswers=QUIZ.map(function(){ return 3; });
+    renderQuiz(); quizmodal.classList.add("show");
+  }
+  function closeQuiz(snooze){
+    quizmodal.classList.remove("show");
+    if(snooze){ var rec=qzRec(); rec.snooze=Date.now(); qzSave(rec); }
+  }
+  var quizProposed=false;
+  function maybeProposeQuiz(){
+    if(quizProposed||!profile||!loginscr||loginscr.classList.contains("show")) return;
+    var rec=qzRec(), now=Date.now();
+    if(rec.snooze && now-rec.snooze<7*864e5) return;
+    if(rec.last && now-rec.last<30*864e5) return;
+    quizProposed=true;
+    openQuiz(rec.last?"redo":"first");
+  }
+  function renderQuiz(){
+    var h="";
+    if(qzStep===-1){
+      h+="<div class='imtitle'>📝 "+qzT("Où t'en es, honnêtement ?","Where are you at, honestly?")+"</div>";
+      h+="<p>"+(qzMode==="redo"
+        ? qzT("Ça fait un mois depuis ton dernier test. On refait le point ? Personne d'autre ne voit le résultat.","It's been a month since your last check. Do it again? Nobody else sees the result.")
+        : qzT("8 questions, 2 minutes. Note-toi de 1 à 5, franchement — personne d'autre ne voit le résultat.","8 questions, 2 minutes. Rate yourself 1 to 5, honestly — nobody else sees the result."))+"</p>";
+      h+="<div class='qzbtns'><button class='bigbtn primary' id='qz-start' type='button'>"+qzT("Faire le test","Take the test")+"</button><button class='bigbtn' id='qz-later' type='button'>"+qzT("Plus tard","Later")+"</button></div>";
+    } else if(qzStep<QUIZ.length){
+      var q=QUIZ[qzStep], v=qzAnswers[qzStep];
+      h+="<div class='qzstep'>"+(qzStep+1)+" / "+QUIZ.length+"</div>";
+      h+="<div class='qzq'>"+qzT(q.fr,q.en)+"</div>";
+      h+="<div class='qzval' id='qz-vallabel'>"+qzT(VALW_FR[v],VALW_EN[v])+"</div>";
+      h+="<input type='range' class='qzslider' id='qz-range' min='1' max='5' step='1' value='"+v+"'>";
+      h+="<div class='qzscale'><span>"+qzT("jamais","never")+"</span><span>"+qzT("toujours","always")+"</span></div>";
+      h+="<div class='qzbtns'>"+(qzStep>0?"<button class='bigbtn qback' id='qz-back' type='button'>←</button>":"")
+        +"<button class='bigbtn primary' id='qz-next' type='button'>"+(qzStep===QUIZ.length-1?qzT("Voir mon résultat","See my result"):qzT("Suivant","Next"))+"</button></div>";
+    } else {
+      var total=qzAnswers.reduce(function(a,b){ return a+b; },0), max=QUIZ.length*5;
+      var verdict;
+      if(total>=36) verdict=qzT("Solide. Tu t'entraînes comme il faut — continue exactement comme ça.","Solid. You're training the right way — keep doing exactly this.");
+      else if(total>=28) verdict=qzT("Bonne base. Deux-trois habitudes à resserrer — elles sont là :","Good base. Two or three habits to tighten — here they are:");
+      else if(total>=20) verdict=qzT("Honnête — et c'est exactement pour ça que ce guide existe. Commence par ça :","Honest — and that's exactly what this guide is for. Start here:");
+      else verdict=qzT("Merci d'avoir été franc. La marge est énorme, et c'est une bonne nouvelle : chaque point ci-dessous, c'est des résultats en plus.","Thanks for being honest. The upside is huge — every point below means more results.");
+      h+="<div class='imtitle'>"+qzT("Ton résultat","Your result")+"</div>";
+      h+="<div class='qzscore'>"+total+" / "+max+"</div>";
+      h+="<div class='qzverdict'>"+verdict+"</div>";
+      var lows=QUIZ.map(function(q,i){ return {i:i,v:qzAnswers[i]}; })
+        .sort(function(a,b){ return a.v-b.v; })
+        .filter(function(x){ return x.v<=3; }).slice(0,3);
+      lows.forEach(function(x){ var q=QUIZ[x.i];
+        h+="<div class='qzadv'><b>"+x.v+"/5 · "+qzT(q.fr,q.en)+"</b><br>"+qzT(q.cfr,q.cen)+"</div>"; });
+      if(!lows.length) h+="<div class='qzadv'>"+qzT("Aucun point faible marqué. Sérieusement, chapeau.","No weak spot flagged. Seriously, hats off.")+"</div>";
+      h+="<div class='qzbtns'><button class='bigbtn' id='qz-rules' type='button'>"+qzT("Relire les règles","Reread the rules")+"</button><button class='bigbtn primary' id='qz-close' type='button'>"+qzT("Fermer","Close")+"</button></div>";
+    }
+    qzbody.innerHTML=h;
+    var st=document.getElementById("qz-start");
+    if(st) st.addEventListener("click",function(){ qzStep=0; renderQuiz(); });
+    var lt=document.getElementById("qz-later");
+    if(lt) lt.addEventListener("click",function(){ closeQuiz(true); });
+    var rg=document.getElementById("qz-range");
+    if(rg) rg.addEventListener("input",function(){
+      qzAnswers[qzStep]=parseInt(rg.value,10);
+      document.getElementById("qz-vallabel").textContent=qzT(VALW_FR[qzAnswers[qzStep]],VALW_EN[qzAnswers[qzStep]]);
+    });
+    var bk=document.getElementById("qz-back");
+    if(bk) bk.addEventListener("click",function(){ qzStep--; renderQuiz(); });
+    var nx=document.getElementById("qz-next");
+    if(nx) nx.addEventListener("click",function(){
+      qzStep++;
+      if(qzStep===QUIZ.length){
+        var total=qzAnswers.reduce(function(a,b){ return a+b; },0);
+        qzSave({last:Date.now(),score:total});
+      }
+      renderQuiz();
+    });
+    var rl=document.getElementById("qz-rules");
+    if(rl) rl.addEventListener("click",function(){ closeQuiz(false); setView("rules"); });
+    var cl=document.getElementById("qz-close");
+    if(cl) cl.addEventListener("click",function(){ closeQuiz(false); });
+  }
+  document.getElementById("quizbtn").addEventListener("click",function(){
+    openQuiz(qzRec().last?"redo":"first");
+  });
 </script>
 
 </body>
