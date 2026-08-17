@@ -142,6 +142,15 @@
     font:600 12px/1 inherit; padding:7px 10px; cursor:pointer; }
   .wcol input.savedok{ border-color:var(--done); }
 
+  #tabbar{ position:sticky; top:0; z-index:10; display:flex; gap:8px; padding:10px 0;
+    background:var(--bg); margin-top:14px; }
+  #tabbar button{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card);
+    color:var(--sub); font:700 15px/1.2 inherit; cursor:pointer; }
+  #tabbar button.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  #tabbar button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  body[data-tab="prog"] .sec-rules{ display:none; }
+  body[data-tab="rules"] .sec-prog{ display:none; }
+
   .mhead{ padding:10px 14px 4px; font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase;
     border-top:1px solid var(--line); }
   .mhead:first-of-type{ border-top:0; }
@@ -225,7 +234,12 @@
     <p class="legend"><span class="sq"></span> <span class="en">= main lifts (the base). No outline = finishing / isolation work.</span><span class="fr">= gros exos (la base). Sans contour = finition / isolation.</span></p>
   </header>
 
-  <section>
+  <div id="tabbar">
+    <button data-t="prog" type="button"><span class="en">Program</span><span class="fr">Programme</span></button>
+    <button data-t="rules" type="button"><span class="en">Rules &amp; tips</span><span class="fr">Règles &amp; conseils</span></button>
+  </div>
+
+  <section class="sec-rules">
     <h2><span class="en">The only 3 rules</span><span class="fr">Les 3 seules règles</span></h2>
     <div class="rules">
       <div class="rule"><span class="rtitle"><span class="en">1 · Hard but clean</span><span class="fr">1 · Dur mais propre</span></span>
@@ -248,7 +262,7 @@
       <p class="fr">Tape ▶ sous chaque exo. Les longues sont longues parce qu'elles sont pleines de détails. 2 minutes de vidéo t'évitent des semaines à mal faire.</p></details>
   </section>
 
-  <section>
+  <section class="sec-prog">
     <h2><span class="en">The program</span><span class="fr">Le programme</span></h2>
     <div class="modes">
       <button class="mode" id="mode-starter"><b>Starter</b><small><span class="en">first month · ~1 hour</span><span class="fr">premier mois · ~1h</span></small></button>
@@ -313,7 +327,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-rules">
     <h2><span class="en">Why I built it this way</span><span class="fr">Pourquoi c'est construit comme ça</span></h2>
     <div class="why">
       <p class="en">Each day starts with the <b>big lifts</b> (silver outline) — they use the most muscle and take the most energy, so you do them while you're fresh. Then come the <b>isolation exercises</b> to finish working every part of the muscle. Heavy first, details after.</p>
@@ -325,7 +339,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-rules">
     <h2><span class="en">Run this in your head, every exercise</span><span class="fr">Déroule ça dans ta tête, à chaque exo</span></h2>
     <div class="why">
       <p><b>1.</b> <span class="en">Do I know the movement? (If not → watch the video again.)</span><span class="fr">Je connais le mouvement ? (Sinon → revois la vidéo.)</span></p>
@@ -599,6 +613,17 @@
   document.querySelectorAll("#unitseg button").forEach(function(b){
     b.addEventListener("click",function(){ setUnit(b.getAttribute("data-v")); });
   });
+  var TABKEY="romain-gym-tab";
+  function setTab(t){
+    body.setAttribute("data-tab",t);
+    document.querySelectorAll("#tabbar button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-t")===t);
+    });
+    try{ localStorage.setItem(TABKEY,t); }catch(e){}
+  }
+  document.querySelectorAll("#tabbar button").forEach(function(b){
+    b.addEventListener("click",function(){ setTab(b.getAttribute("data-t")); });
+  });
 
   document.querySelectorAll(".day").forEach(function(day){
     var id=day.getAttribute("data-day");
@@ -671,6 +696,9 @@
   loadProfileData();
   setLang(savedLang==="fr"?"fr":"en");
   setMode(savedMode==="full"?"full":"starter");
+  var savedTab="prog";
+  try{ savedTab=localStorage.getItem(TABKEY)||"prog"; }catch(e){}
+  setTab(savedTab==="rules"?"rules":"prog");
   if(profile){ setProfile(profile); } else { showLogin(); }
 </script>
 
